@@ -527,7 +527,7 @@ const HORNS = [
   { id: 'stadion', name: 'Stadionhorn', cost: 0 },
   { id: 'nebel', name: 'Nebelhorn', cost: 0 },
   { id: 'fanfare', name: 'Fanfare', cost: 4000 },
-].filter((h) => h.id !== 'sechselaeuten' || document.getElementById('sndSechs'));   // öffentliche Version ohne MP3
+];   // Sechseläuten: mit MP3 die Aufnahme, ohne MP3 (öffentliche Version) der selbst erzeugte Marsch
 
 // Herausforderungen (jeden Tag eine andere)
 const CHALLENGES = [
@@ -705,6 +705,7 @@ const Snd = {
   },
   playSechs() {
     if (!this.ok()) return;
+    if (!document.getElementById('sndSechs')) { this.playMarch(); return; }   // öffentliche Version: selbst erzeugter Marsch
     this.stopMusic();
     const go = (b) => {
       if (!b || !this.ac || this.muted) return;
@@ -715,6 +716,94 @@ const Snd = {
     if (this.sechs) go(this.sechs); else { const p = this.loadSechs(); if (p) p.then(go); }
   },
   stopMusic() { if (this.music) { try { this.music.stop(); } catch (e) {} this.music = null; } },
+  // Sechseläutenmarsch, ganz aus erzeugten Klängen (ohne Aufnahme). Melodie: traditioneller Marsch
+  // (Komponist unbekannt, um 1813), Auftakt und Takte 2–9, F-Dur, 2/4-Takt. Trompeten, Hörner, Tuba, Trommeln.
+  playMarch() {
+    if (!this.ok()) return;
+    this.stopMusic();
+    const ac = this.ac, t0 = ac.currentTime + 0.05, Q = 60 / 112;   // Q = Dauer einer Viertelnote (112 Schläge pro Minute)
+    const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+    const bus = ac.createGain(); bus.gain.value = 1; bus.connect(this.out);
+    const srcs = [];
+    let lastEnd = 0;
+    const blow = (m, at, dur, vol, cut, type = 'sawtooth', vib = 0.004) => {   // ein Blechbläser-Ton
+      const t = t0 + at * Q, d = Math.max(0.06, dur * Q), f = hz(m);
+      const o = ac.createOscillator(), g = ac.createGain(), fl = ac.createBiquadFilter(), lfo = ac.createOscillator(), lg = ac.createGain();
+      o.type = type; o.frequency.value = f;
+      lfo.frequency.value = 5.2; lg.gain.value = f * vib; lfo.connect(lg); lg.connect(o.frequency);
+      fl.type = 'lowpass'; fl.Q.value = 1.4; fl.frequency.setValueAtTime(cut * 0.4, t); fl.frequency.linearRampToValueAtTime(cut, t + 0.05);
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + 0.025);
+      g.gain.setValueAtTime(vol * 0.8, t + Math.max(0.04, d - 0.06)); g.gain.linearRampToValueAtTime(0.0001, t + d);
+      o.connect(fl); fl.connect(g); g.connect(bus);
+      o.start(t); lfo.start(t); o.stop(t + d + 0.05); lfo.stop(t + d + 0.05);
+      srcs.push(o, lfo); lastEnd = Math.max(lastEnd, t + d);
+    };
+    const drum = (at, kind, vol) => {   // 0 = grosse Trommel, 1 = kleine Trommel, 2 = Becken
+      const t = t0 + at * Q;
+      if (kind === 0) {
+        const o = ac.createOscillator(), g = ac.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(90, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.25);
+        g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+        o.connect(g); g.connect(bus); o.start(t); o.stop(t + 0.4); srcs.push(o);
+        return;
+      }
+      const s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(), len = kind === 2 ? 1.6 : 0.12;
+      s.buffer = this.noise; s.loop = true;
+      f.type = kind === 2 ? 'highpass' : 'bandpass'; f.frequency.value = kind === 2 ? 5000 : 1900; f.Q.value = 0.8;
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+      s.connect(f); f.connect(g); g.connect(bus); s.start(t, Math.random() * 0.5); s.stop(t + len + 0.05); srcs.push(s);
+      lastEnd = Math.max(lastEnd, t + len);
+    };
+    // Melodie: [MIDI-Ton, Dauer in Vierteln]; 0 = Pause
+    const MEL = [[60, 0.5],
+      [65, 0.5], [0, 0.5], [67, 0.5], [0, 0.5],
+      [69, 0.5], [70, 0.25], [69, 0.25], [67, 0.5], [65, 0.5],
+      [72, 0.5], [74, 0.25], [72, 0.25], [70, 0.5], [69, 0.5],
+      [69, 0.5], [67, 0.5], [70, 0.5], [64, 0.5],
+      [65, 0.5], [0, 0.5], [67, 0.5], [0, 0.5],
+      [69, 0.5], [70, 0.25], [69, 0.25], [67, 0.5], [65, 0.5],
+      [67, 0.75], [67, 0.25], [64, 0.25], [65, 0.25], [67, 0.25], [64, 0.25],
+      [65, 2]];
+    let at = 0;
+    for (const [m, d] of MEL) {
+      if (m) {
+        const len = d >= 2 ? d : d * 0.88;   // leicht abgesetzt wie bei Blasmusik, Schlusston lang
+        blow(m + 12, at, len, 0.075, 2600);                 // Trompeten (eine Oktave höher)
+        blow(m + 12, at, len, 0.035, 2400, 'square', 0.006);
+        blow(m, at, len, 0.06, 1500);                       // Hörner in der gespielten Lage
+      }
+      at += d;
+    }
+    // Begleitung ab Takt 2 (Schlag 0.5): Akkord je Schlag, F-Dur oder C-Dur (C7)
+    const CH = { F: { bass: [41, 36], tones: [57, 60, 65] }, C: { bass: [36, 43], tones: [55, 58, 64] } };
+    const HARM = ['F', 'C', 'F', 'F', 'F', 'F', 'C', 'C', 'F', 'C', 'F', 'F', 'C', 'C', 'F', 'F'];
+    HARM.forEach((k, i) => {
+      const b = 0.5 + i, c = CH[k], last = i >= HARM.length - 2;
+      if (last) {   // Schlussakkord: alle zusammen, lang
+        if (i === HARM.length - 2) { blow(c.bass[0], b, 2, 0.13, 700, 'triangle', 0.002); for (const n of c.tones) blow(n, b, 2, 0.045, 1300); }
+        return;
+      }
+      const root = i % 2 === 0 || HARM[i - 1] !== k;                 // neuer Akkord: Grundton, sonst Quinte
+      blow(c.bass[root ? 0 : 1], b, 0.42, 0.14, 700, 'triangle', 0.002);   // Tuba: um …
+      for (const n of c.tones) blow(n, b + 0.5, 0.22, 0.04, 1300);   // … pa (Begleit-Akkord auf dem Zwischenschlag)
+    });
+    // Schlagzeug: Wirbel im Auftakt, grosse Trommel auf 1, kleine Trommel auf 2, Becken am Anfang und am Schluss
+    for (let k = 0; k < 4; k++) drum(k * 0.125, 1, 0.08 + k * 0.03);
+    for (let i = 0; i < HARM.length; i++) {
+      const b = 0.5 + i;
+      if (i % 2 === 0) drum(b, 0, 0.5); else drum(b, 1, 0.16);
+    }
+    drum(0.5, 2, 0.12); drum(0.5 + HARM.length - 2, 2, 0.16); drum(0.5 + HARM.length - 2, 0, 0.6);
+    const handle = {
+      stop: () => {
+        const now = ac.currentTime;
+        try { bus.gain.cancelScheduledValues(now); bus.gain.setValueAtTime(bus.gain.value, now); bus.gain.linearRampToValueAtTime(0.0001, now + 0.15); } catch (e) {}
+        for (const s of srcs) { try { s.stop(now + 0.2); } catch (e) {} }
+      },
+    };
+    this.music = handle;
+    setTimeout(() => { if (this.music === handle) this.music = null; }, (lastEnd - ac.currentTime + 0.3) * 1000);
+  },
   allow: false,                                 // Probehören in der Garderobe
   ok() { return this.ac && !this.muted && (screen !== 'menu' || this.allow); },
   brass(f, dur, vol, cut = 1400, delay = 0) {   // Blechbläser-Ton für die Torhörner

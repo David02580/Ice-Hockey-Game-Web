@@ -1291,7 +1291,10 @@ function buildRink() {
   // Schriftzug in der Mitte
   g.save(); g.translate(W / 2, CY); g.font = `900 italic 120px ${FONT}`; g.textAlign = 'center'; g.textBaseline = 'middle';
   g.fillStyle = RK.logo; g.fillText(wardrobe.team.name ? wardrobe.team.name.toUpperCase() : 'EISDUELL', 0, 6, W - 300); g.restore();
-  if (wardrobe.team.logo !== 'keins') { g.save(); g.translate(W / 2, CY); g.globalAlpha = 0.28; g.fillStyle = RK.a; g.strokeStyle = RK.a; drawLogo(g, wardrobe.team.logo, 52); g.restore(); }
+  if (wardrobe.team.logo !== 'keins') {   // erst separat zeichnen (manche Logos stanzen Teile aus), dann aufs Eis setzen
+    const L = logoImg(wardrobe.team.logo, RK.a, 260);
+    g.save(); g.globalAlpha = 0.28; g.drawImage(L, W / 2 - 65, CY - 65, 130, 130); g.restore();
+  }
 
   const glowLine = (col, wdt, blur, fn) => {
     g.save(); g.strokeStyle = col; g.lineWidth = wdt; g.shadowColor = col; g.shadowBlur = blur * s; fn(); g.restore();
@@ -2621,6 +2624,12 @@ function drawTrainHUD(c) {   // Aufgabe oben in der Mitte
 const SHOT_NAMES = { wrist: 'Handgelenkschuss', hammer: 'Schlagschuss', back: 'Rückhand', lob: 'Lupfer', wrap: 'Bauerntrick', direct: 'Direktschuss' };
 let career = store.get('eisduell-karriere', null);
 if (!career || typeof career !== 'object' || typeof career.games !== 'number') career = null;
+else {   // beschädigte Felder reparieren statt abzustürzen
+  for (const k of ['games', 'wins', 'goals', 'conceded', 'shots', 'streak', 'best', 'cups', 'seasons', 'points']) if (!Number.isFinite(career[k])) career[k] = 0;
+  if (!career.types || typeof career.types !== 'object') career.types = {};
+  for (const k of Object.keys(career.types)) if (!SHOT_NAMES[k] || !Number.isFinite(career.types[k])) delete career.types[k];
+  if (typeof career.since !== 'string') career.since = new Date().toLocaleDateString('de-CH');
+}
 function careerRecord(winner) {
   if (!career) career = { since: new Date().toLocaleDateString('de-CH'), games: 0, wins: 0, goals: 0, conceded: 0, shots: 0, types: {}, streak: 0, best: 0, cups: 0, seasons: 0, points: 0 };
   const c = career, won = winner === 0;
@@ -2767,8 +2776,18 @@ function miniGoal(team) {   // Tor im Mini-Spiel
     else { goalTimer = 0.4; slowmo = 0; popText(GL_R - 80, CY - 60, team === 0 ? 'ERST ALLE HÜTCHEN!' : '', PINK, 18); }
     return;
   }
-  if (k === 'penalty') { mg.res.push(true); sfx.horn(hornFor(0)); showBanner('TOR!', mg.res.filter(Boolean).length + ' von ' + mg.res.length, teamC(0), '', 1.0); goalTimer = 1.1; return; }
-  if (k === 'goalie') { mg.n++; sfx.aww(); showBanner('TOR', 'Nächster Angriff', PINK, '', 0.8); goalTimer = 0.9; }
+  if (k === 'penalty') {
+    mg.res.push(team === 0);   // Eigentor zählt nicht
+    if (team === 0) { sfx.horn(hornFor(0)); showBanner('TOR!', mg.res.filter(Boolean).length + ' von ' + mg.res.length, teamC(0), '', 1.0); }
+    else showBanner('EIGENTOR', 'zählt nicht', PINK, '', 1.0);
+    goalTimer = 1.1; return;
+  }
+  if (k === 'goalie') {
+    mg.n++;
+    if (team === 1) { sfx.aww(); showBanner('TOR', 'Nächster Angriff', PINK, '', 0.8); }
+    else { mg.score++; showBanner('EIGENTOR!', 'zählt als Parade', teamC(0), '', 0.8); }   // Angreifer trifft sein eigenes Tor
+    goalTimer = 0.9;
+  }
 }
 function miniAfterGoal() {   // nach Tor oder abgeschlossenem Versuch
   const k = mg.kind, me = teams[0][0];

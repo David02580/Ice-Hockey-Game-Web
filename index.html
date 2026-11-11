@@ -227,6 +227,16 @@
   table.league tr.me td { background: rgba(255, 210, 63, 0.14); color: #fff; }
   table.league tr.me td.pk { color: var(--gold); }
   table.league i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+  /* Mein Team */
+  .teamform { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 8px; }
+  .teamform label { display: flex; flex-direction: column; align-items: center; gap: 3px; font: 800 10.5px var(--font); letter-spacing: 0.14em; color: var(--muted); text-transform: uppercase; }
+  .tinp { width: 170px; padding: 7px 8px; text-align: center; font: 800 16px var(--font); color: #fff; background: rgba(46, 230, 255, 0.08);
+    border: 2px solid rgba(46, 230, 255, 0.45); border-radius: 10px; outline: none; -webkit-user-select: text; user-select: text; }
+  .tinp.short { width: 74px; text-transform: uppercase; letter-spacing: 0.12em; }
+  .tinp:focus { border-color: var(--gold); }
+  .grid.logos { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .grid.logos .sw { padding: 6px 2px; font-size: 10.5px; }
+  .grid.logos canvas { position: static; inset: auto; width: 34px; height: 34px; display: block; }   /* nicht wie das Spielfeld fixieren */
   .btn.hl { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 14px rgba(255, 210, 63, 0.35); }
   @media (min-width: 900px) and (max-height: 760px) {
     #menu h1 { font-size: 54px; margin: 2px 0 6px; }
@@ -376,6 +386,13 @@
     <div class="total" id="wardSum"></div>
     <div class="mgrid">
       <div>
+        <h2>Mein Team</h2>
+        <div class="teamform">
+          <label>Teamname<input class="tinp" id="tmName" maxlength="16" autocomplete="off" spellcheck="false" placeholder="z.B. Seebuben"></label>
+          <label>Kürzel<input class="tinp short" id="tmShort" maxlength="3" autocomplete="off" spellcheck="false" placeholder="DU"></label>
+          <label>Nummer<input class="tinp short" id="tmNum" maxlength="2" inputmode="numeric" autocomplete="off" placeholder="9"></label>
+        </div>
+        <div class="grid logos" id="logoGrid"></div>
         <h2>Trikot</h2>
         <div class="grid" id="jerseyGrid"></div>
         <h2>Torhorn</h2>
@@ -488,6 +505,22 @@ const RINKS = [
   { id: 'galaxie', name: 'Galaxie', cost: 12000, arena: '#030309', ice: ['#1d1846', '#110e2e', '#06051a'], a: '#8a7bff', b: '#ff5bd8', board: '#d9d2ff',
     scratch: '#ffffff', logo: 'rgba(200,190,255,0.05)', net: 'rgba(255,255,255,0.07)', netLine: 'rgba(220,210,255,0.22)', post: '#ffffff',
     puck: '#f6f3ff', rim: '#8a7bff', mark: '210,200,255', spray: ['#ffffff', '#d8d0ff', '#ffb8f0'], stars: true },
+  // deco = einmal gezeichnete Ausstattung, fx = Bewegung in jedem Bild, slow = langsameres Eis
+  { id: 'freiluft', name: 'Freiluft', cost: 1000, arena: '#16263b', ice: ['#f3f8ff', '#dce9f5', '#bfd3e6'], a: '#2b6cb0', b: '#d6336c', board: '#ffffff',
+    scratch: '#7a9ab8', logo: 'rgba(43,108,176,0.07)', net: 'rgba(10,40,80,0.08)', netLine: 'rgba(10,40,80,0.3)', post: '#d6336c',
+    puck: '#14181f', rim: '#000000', mark: '90,130,170', spray: ['#ffffff', '#e6f2ff', '#c6dcf0'], deco: 'snow', fx: 'snow', slow: true },
+  { id: 'retro', name: 'Retro-Arcade', cost: 3500, arena: '#000000', ice: ['#1c0838', '#12042a', '#07011a'], a: '#00ff9c', b: '#ff00e6', board: '#00e5ff',
+    scratch: '#00ff9c', logo: 'rgba(0,255,156,0.06)', net: 'rgba(0,229,255,0.07)', netLine: 'rgba(0,229,255,0.3)', post: '#ffffff',
+    puck: '#ffffff', rim: '#00ff9c', mark: '0,255,156', spray: ['#00ff9c', '#00e5ff', '#ff00e6'], deco: 'retro' },
+  { id: 'vulkan', name: 'Vulkan', cost: 7000, arena: '#120604', ice: ['#3d2621', '#2a1714', '#150a08'], a: '#ff8a3d', b: '#ff3d3d', board: '#ffcf8a',
+    scratch: '#ffb070', logo: 'rgba(255,138,61,0.06)', net: 'rgba(255,200,150,0.07)', netLine: 'rgba(255,200,150,0.25)', post: '#ffcf8a',
+    puck: '#fff2e0', rim: '#ff8a3d', mark: '255,160,100', spray: ['#ffd0a0', '#ff8a3d', '#ffffff'], deco: 'lava', fx: 'embers' },
+  { id: 'meer', name: 'Unterwasser', cost: 9000, arena: '#021a26', ice: ['#1fb0c4', '#0f7a8f', '#06485b'], a: '#5ff5ff', b: '#ffd23f', board: '#c9fbff',
+    scratch: '#bff8ff', logo: 'rgba(200,255,255,0.06)', net: 'rgba(255,255,255,0.08)', netLine: 'rgba(200,255,255,0.3)', post: '#ffffff',
+    puck: '#f4fbff', rim: '#ffd23f', mark: '200,250,255', spray: ['#ffffff', '#bff8ff', '#7fe9ff'], deco: 'water', fx: 'bubbles' },
+  { id: 'zuerisee', name: 'Zürisee bei Nacht', cost: 15000, arena: '#050a16', ice: ['#22395e', '#162847', '#0a152b'], a: '#ffd23f', b: '#4da3ff', board: '#e8f1ff',
+    scratch: '#ffffff', logo: 'rgba(255,210,63,0.05)', net: 'rgba(255,255,255,0.07)', netLine: 'rgba(255,255,255,0.22)', post: '#ffffff',
+    puck: '#f4fbff', rim: '#ffd23f', mark: '220,235,255', spray: ['#ffffff', '#ffe9a8', '#bcd8ff'], deco: 'lake', fx: 'lights' },
 ];
 
 // Erfolge (Abzeichen)
@@ -559,7 +592,13 @@ const PW_TYPES = {
   double: { name: 'DOPPELTE PUNKTE', glyph: '×2', col: GREEN },
   tired: { name: 'MÜDER GOALIE', glyph: 'Zz', col: '#b26bff' },
   magnet: { name: 'MAGNET-STOCK', glyph: 'U', col: '#ff8a3d' },
+  giant: { name: 'RIESENPUCK', glyph: '●', col: '#7dd3ff' },          // Puck riesig: dein Team schnappt ihn leichter
+  mini: { name: 'MINI-GOALIE', glyph: '▼', col: '#ff5bd8' },          // gegnerischer Goalie schrumpft
+  freeze: { name: 'EISZEIT', glyph: '✱', col: '#a8f0ff', time: 2.2 },  // Gegner frieren ein
+  super: { name: 'SUPERSCHUSS', glyph: '»', col: '#ff4a4a', time: 9 },  // nächster Schuss extrem schnell
 };
+const giantOn = () => teamPw(0, 'giant') || teamPw(1, 'giant');
+const frozenBy = (s) => s.stun > 0 && teamPw(1 - s.team, 'freeze');
 const PWK = Object.keys(PW_TYPES);
 const PW_TIME = 6;
 const OT_TIME = 60;                         // Verlängerung in Sekunden
@@ -612,6 +651,16 @@ const settings = { opp: 'cpu', size: 1, level: 1, ctl: 'keys', orient: 'quer' };
   }
 }
 const wardrobe = Object.assign({ jersey: 'cyan', rink: 'nacht', horn: 'sechselaeuten' }, store.get('eisduell-garderobe', {}));
+// Mein Team: Name, Kürzel (ersetzt «DU»), Rückennummer, Logo
+const cleanTeamName = (v) => String(v || '').replace(/[^A-Za-z0-9ÄÖÜäöüÉÈÀéèàçß .\-]/g, '').replace(/\s+/g, ' ').slice(0, 16);
+const cleanShort = (v) => String(v || '').toUpperCase().replace(/[^A-Z0-9ÄÖÜ]/g, '').slice(0, 3);
+const cleanNum = (v) => { const n = parseInt(String(v).replace(/\D/g, ''), 10); return n >= 1 && n <= 99 ? n : 9; };
+{
+  const t = wardrobe.team && typeof wardrobe.team === 'object' ? wardrobe.team : {};
+  wardrobe.team = { name: cleanTeamName(t.name).trim(), short: cleanShort(t.short), num: cleanNum(t.num), logo: typeof t.logo === 'string' ? t.logo : 'keins' };
+}
+const myShort = () => wardrobe.team.short || 'DU';
+const myTeamName = () => wardrobe.team.name || 'Du';
 let fightTotal = store.get('eisduell-schlaegereien', 0); if (typeof fightTotal !== 'number' || !isFinite(fightTotal)) fightTotal = 0;
 let totalPts = store.get('eisduell-gesamtpunkte', 0); if (typeof totalPts !== 'number' || !isFinite(totalPts)) totalPts = 0;
 let achieved = store.get('eisduell-erfolge', []); if (!Array.isArray(achieved)) achieved = [];
@@ -648,7 +697,7 @@ function seasonOrder() {   // Rangliste: Punkte, dann Tordifferenz, dann geschos
     return B.p - A.p || (B.gf - B.ga) - (A.gf - A.ga) || B.gf - A.gf || a - b;
   });
 }
-const seasonName = (i) => (i === 0 ? 'Du' : CUP[i - 1].name);
+const seasonName = (i) => (i === 0 ? myTeamName() : CUP[i - 1].name);
 const seasonCol = (i) => (i === 0 ? T0.c : CUP[i - 1].c);
 function seasonRecord(a, b, ga, gb, extra) {   // extra: Entscheidung in Verlängerung oder Penaltys
   const A = season.tab[a], B = season.tab[b], w = ga > gb ? A : B, l = ga > gb ? B : A;
@@ -1132,6 +1181,39 @@ function rrect(g, x, y, w, h, r) {
   g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
   g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
 }
+// Team-Logos: einfache Formen, mit der aktuellen Füll-/Strichfarbe um (0,0) gezeichnet; r = Radius
+const LOGOS = [
+  { id: 'keins', name: 'Keins' }, { id: 'stern', name: 'Stern' }, { id: 'blitz', name: 'Blitz' }, { id: 'krone', name: 'Krone' },
+  { id: 'flamme', name: 'Flamme' }, { id: 'flocke', name: 'Flocke' }, { id: 'schlaeger', name: 'Schläger' }, { id: 'berg', name: 'Berge' },
+  { id: 'steinbock', name: 'Steinbock' }, { id: 'wolf', name: 'Wolf' },
+];
+function drawLogo(g, id, r) {
+  g.save(); g.lineJoin = 'round'; g.lineCap = 'round';
+  const poly = (pts) => { g.beginPath(); pts.forEach(([x, y], i) => g[i ? 'lineTo' : 'moveTo'](x * r, y * r)); g.closePath(); g.fill(); };
+  if (id === 'stern') { const p = []; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + (i * Math.PI) / 5, k = i % 2 ? 0.42 : 1; p.push([Math.cos(a) * k, Math.sin(a) * k]); } poly(p); }
+  else if (id === 'blitz') poly([[0.15, -1], [-0.55, 0.12], [-0.05, 0.12], [-0.25, 1], [0.55, -0.18], [0.05, -0.18], [0.3, -1]]);
+  else if (id === 'krone') { poly([[-0.9, 0.55], [-0.9, -0.45], [-0.45, 0.05], [0, -0.75], [0.45, 0.05], [0.9, -0.45], [0.9, 0.55]]); for (const x of [-0.9, 0, 0.9]) { g.beginPath(); g.arc(x * r, (x ? -0.55 : -0.85) * r, r * 0.13, 0, TAU); g.fill(); } g.fillRect(-0.9 * r, 0.65 * r, 1.8 * r, 0.22 * r); }
+  else if (id === 'flamme') { g.beginPath(); g.moveTo(0, -r); g.bezierCurveTo(0.55 * r, -0.35 * r, 0.85 * r, 0.25 * r, 0.6 * r, 0.65 * r); g.quadraticCurveTo(0.3 * r, r, 0, r); g.quadraticCurveTo(-0.3 * r, r, -0.6 * r, 0.65 * r); g.bezierCurveTo(-0.8 * r, 0.2 * r, -0.4 * r, -0.1 * r, -0.2 * r, -0.45 * r); g.quadraticCurveTo(0.05 * r, -0.25 * r, 0, -r); g.fill(); }
+  else if (id === 'flocke') { g.lineWidth = r * 0.16; g.beginPath(); for (let i = 0; i < 6; i++) { const a = (i * Math.PI) / 3, c = Math.cos(a), s = Math.sin(a); g.moveTo(0, 0); g.lineTo(c * r, s * r); for (const k of [0.55]) { const bx = c * r * k, by = s * r * k; for (const q of [-0.6, 0.6]) { const b = a + q; g.moveTo(bx, by); g.lineTo(bx + Math.cos(b) * r * 0.32, by + Math.sin(b) * r * 0.32); } } } g.stroke(); }
+  else if (id === 'schlaeger') { g.lineWidth = r * 0.17; g.beginPath(); g.moveTo(-0.8 * r, -0.9 * r); g.lineTo(0.55 * r, 0.55 * r); g.lineTo(0.9 * r, 0.55 * r); g.moveTo(0.8 * r, -0.9 * r); g.lineTo(-0.55 * r, 0.55 * r); g.lineTo(-0.9 * r, 0.55 * r); g.stroke(); g.beginPath(); g.ellipse(0, 0.85 * r, r * 0.3, r * 0.13, 0, 0, TAU); g.fill(); }
+  else if (id === 'berg') { poly([[-1, 0.7], [-0.3, -0.55], [0.05, 0.05], [0.35, -0.3], [1, 0.7]]); g.save(); g.globalCompositeOperation = 'destination-out'; poly([[-0.3, -0.55], [-0.12, -0.23], [-0.3, -0.3], [-0.45, -0.25]]); g.restore(); }
+  else if (id === 'steinbock') {   // Kopf mit zwei grossen, nach hinten gebogenen Hörnern
+    g.lineWidth = r * 0.2;
+    for (const k of [-1, 1]) { g.beginPath(); g.moveTo(k * 0.14 * r, -0.05 * r); g.quadraticCurveTo(k * 0.1 * r, -1.05 * r, k * 0.85 * r, -0.62 * r); g.stroke(); }
+    g.lineWidth = r * 0.08; for (const k of [-1, 1]) for (const t of [0.35, 0.55, 0.75]) { const x = k * (0.12 + t * 0.35) * r, y = (-0.25 - t * 0.55) * r; g.beginPath(); g.moveTo(x - k * 0.1 * r, y - 0.04 * r); g.lineTo(x + k * 0.1 * r, y + 0.04 * r); g.stroke(); }
+    g.beginPath(); g.ellipse(0, 0.38 * r, 0.3 * r, 0.52 * r, 0, 0, TAU); g.fill();
+    for (const k of [-1, 1]) { g.beginPath(); g.ellipse(k * 0.38 * r, 0.05 * r, 0.16 * r, 0.07 * r, k * 0.4, 0, TAU); g.fill(); }
+  }
+  else if (id === 'wolf') { poly([[-0.75, -0.95], [-0.3, -0.4], [0.3, -0.4], [0.75, -0.95], [0.85, -0.05], [0.45, 0.5], [0, 0.95], [-0.45, 0.5], [-0.85, -0.05]]); g.save(); g.globalCompositeOperation = 'destination-out'; for (const x of [-0.32, 0.32]) poly([[x - 0.16, -0.05], [x + 0.16, -0.05], [x, 0.1]]); g.restore(); }
+  g.restore();
+}
+function logoImg(id, col, size = 68) {   // kleines Bild für die Garderobe
+  const c = document.createElement('canvas'); c.width = c.height = size;
+  const g = c.getContext('2d'); g.translate(size / 2, size / 2); g.fillStyle = col; g.strokeStyle = col;
+  if (id === 'keins') { g.font = `800 ${size * 0.36}px ${FONT}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('–', 0, 0); }
+  else drawLogo(g, id, size * 0.4);
+  return c;
+}
 function buildRink() {
   if (!vw) return;
   const s = scale * dpr;
@@ -1148,9 +1230,11 @@ function buildRink() {
     const x = rand(-PAD, W + PAD), y = rand(-PAD, H + PAD);
     if (x > -6 && x < W + 6 && y > -6 && y < H + 6) continue;
     g.globalAlpha = rand(0.08, 0.35); g.fillStyle = pick(crowdCols);
-    g.beginPath(); g.arc(x, y, rand(1.2, 3), 0, TAU); g.fill();
+    if (RK.deco === 'retro') { const p = Math.round(rand(2, 4)); g.fillRect(Math.round(x / 4) * 4, Math.round(y / 4) * 4, p, p); }   // Pixel-Publikum
+    else { g.beginPath(); g.arc(x, y, rand(1.2, 3), 0, TAU); g.fill(); }
   }
   g.globalAlpha = 1;
+  decoOutside(g, s);
 
   // Eisfläche
   const ice = g.createRadialGradient(W / 2, CY, 40, W / 2, CY, W * 0.62);
@@ -1164,6 +1248,7 @@ function buildRink() {
     }
     g.globalAlpha = 1;
   }
+  decoUnderIce(g, s);
   // feine Kratzer im Eis
   g.strokeStyle = RK.scratch; g.lineWidth = 0.8;
   for (let i = 0; i < 140; i++) {
@@ -1175,7 +1260,8 @@ function buildRink() {
   g.globalAlpha = 1;
   // Schriftzug in der Mitte
   g.save(); g.translate(W / 2, CY); g.font = `900 italic 120px ${FONT}`; g.textAlign = 'center'; g.textBaseline = 'middle';
-  g.fillStyle = RK.logo; g.fillText('EISDUELL', 0, 6); g.restore();
+  g.fillStyle = RK.logo; g.fillText(wardrobe.team.name ? wardrobe.team.name.toUpperCase() : 'EISDUELL', 0, 6, W - 300); g.restore();
+  if (wardrobe.team.logo !== 'keins') { g.save(); g.translate(W / 2, CY); g.globalAlpha = 0.28; g.fillStyle = RK.a; g.strokeStyle = RK.a; drawLogo(g, wardrobe.team.logo, 52); g.restore(); }
 
   const glowLine = (col, wdt, blur, fn) => {
     g.save(); g.strokeStyle = col; g.lineWidth = wdt; g.shadowColor = col; g.shadowBlur = blur * s; fn(); g.restore();
@@ -1228,6 +1314,129 @@ function buildRink() {
   mctx = marksCv.getContext('2d');
   mctx.setTransform(s, 0, 0, s, PAD * s, PAD * s);
   mctx.lineCap = 'round';
+}
+
+// ---- Ausstattung der besonderen Arenen ----
+const inBand = (x, y) => !(x > -4 && x < W + 4 && y > -4 && y < H + 4);   // Rand um das Eis (Publikumsbereich)
+function decoOutside(g, s) {   // im Rand um das Eis
+  const d = RK.deco;
+  if (d === 'snow') {   // Schneewälle und Tannen
+    g.fillStyle = 'rgba(240,248,255,0.85)';
+    for (let x = -PAD; x < W + PAD; x += 26) for (const y of [-PAD + rand(4, 14), H + PAD - rand(4, 14)]) { g.beginPath(); g.arc(x + rand(-6, 6), y, rand(10, 18), 0, TAU); g.fill(); }
+    for (let i = 0; i < 46; i++) {
+      const top = i % 2 === 0, x = rand(-PAD + 10, W + PAD - 10), y = top ? rand(-PAD + 6, -14) : rand(H + 14, H + PAD - 6), h = rand(16, 26);
+      g.fillStyle = '#1d4a35'; g.beginPath(); g.moveTo(x, y - h / 2); g.lineTo(x + h * 0.38, y + h / 2); g.lineTo(x - h * 0.38, y + h / 2); g.closePath(); g.fill();
+      g.fillStyle = 'rgba(255,255,255,0.75)'; g.beginPath(); g.moveTo(x, y - h / 2); g.lineTo(x + h * 0.14, y - h * 0.18); g.lineTo(x - h * 0.14, y - h * 0.18); g.closePath(); g.fill();
+    }
+  } else if (d === 'lava') {   // glühende Risse im Gestein
+    g.save(); g.strokeStyle = '#ff7a1a'; g.shadowColor = '#ff5a00'; g.shadowBlur = 10 * s; g.lineWidth = 2; g.lineCap = 'round';
+    for (let i = 0; i < 40; i++) {
+      let x = rand(-PAD, W + PAD), y = rand(-PAD, H + PAD); if (!inBand(x, y)) continue;
+      g.beginPath(); g.moveTo(x, y);
+      for (let k = 0; k < 4; k++) { x += rand(-16, 16); y += rand(-16, 16); if (!inBand(x, y)) break; g.lineTo(x, y); }
+      g.stroke();
+    }
+    g.restore();
+  } else if (d === 'water') {   // Seegras am Rand
+    g.save(); g.lineCap = 'round';
+    for (let i = 0; i < 70; i++) {
+      const top = i % 2 === 0, x = rand(-PAD, W + PAD), y0 = top ? -PAD : H + PAD, dir = top ? 1 : -1, len = rand(18, 40);
+      g.strokeStyle = pick(['#1f8a5b', '#2bb673', '#16704a']); g.lineWidth = rand(2, 4); g.globalAlpha = 0.8;
+      g.beginPath(); g.moveTo(x, y0);
+      g.quadraticCurveTo(x + rand(-10, 10), y0 + dir * len * 0.5, x + rand(-8, 8), y0 + dir * len); g.stroke();
+    }
+    g.restore();
+  } else if (d === 'lake') {   // oben die Alpen, unten das Seeufer mit Lichtern
+    g.fillStyle = '#26324a';
+    g.beginPath(); g.moveTo(-PAD, -6); let x = -PAD;
+    while (x < W + PAD) { const w = rand(40, 110); g.lineTo(x + w / 2, -PAD + rand(4, 22)); g.lineTo(x + w, -6 - rand(0, 8)); x += w; }
+    g.lineTo(W + PAD, -6); g.closePath(); g.fill();
+    g.fillStyle = 'rgba(240,246,255,0.8)';   // Schneespitzen
+    x = -PAD; while (x < W + PAD) { const px = x + rand(30, 90); g.beginPath(); g.arc(px, -PAD + rand(10, 20), rand(3, 6), 0, TAU); g.fill(); x = px; }
+    for (let i = 0; i < 160; i++) {   // Lichter der Stadt
+      const lx = rand(-PAD, W + PAD), ly = rand(H + 8, H + PAD - 4);
+      g.globalAlpha = rand(0.5, 1); g.fillStyle = pick(['#ffd23f', '#ffe9a8', '#ffffff', '#ffb070', '#bcd8ff']);
+      g.fillRect(lx, ly, rand(1.2, 2.6), rand(1.2, 3.2));
+    }
+    g.globalAlpha = 1;
+  }
+}
+function decoUnderIce(g, s) {   // unter dem Eis (schon auf die Eisfläche zugeschnitten)
+  const d = RK.deco;
+  if (d === 'retro') {   // Neon-Gitter und Bildschirmzeilen
+    g.save(); g.strokeStyle = 'rgba(0,255,156,0.09)'; g.lineWidth = 1.5;
+    for (let x = 0; x <= W; x += 50) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
+    for (let y = 0; y <= H; y += 50) { g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
+    g.fillStyle = 'rgba(0,0,0,0.18)'; for (let y = 0; y < H; y += 4) g.fillRect(0, y, W, 1.5);
+    g.restore();
+  } else if (d === 'lava') {   // glühende Adern im Gestein
+    g.save(); g.lineCap = 'round'; g.shadowColor = '#ff4a00';
+    for (let i = 0; i < 26; i++) {
+      let x = rand(0, W), y = rand(0, H), a = rand(0, TAU);
+      g.strokeStyle = pick(['rgba(255,110,30,0.55)', 'rgba(255,160,60,0.45)', 'rgba(255,60,20,0.5)']); g.lineWidth = rand(1.5, 3.5); g.shadowBlur = 14 * s;
+      g.beginPath(); g.moveTo(x, y);
+      for (let k = 0; k < 6; k++) { a += rand(-0.7, 0.7); const l = rand(20, 50); x += Math.cos(a) * l; y += Math.sin(a) * l; g.lineTo(x, y); }
+      g.stroke();
+    }
+    g.restore();
+  } else if (d === 'water') {   // Lichtmuster wie auf dem Meeresgrund
+    g.save(); g.strokeStyle = 'rgba(220,255,255,0.12)'; g.lineWidth = 2;
+    for (let i = 0; i < 120; i++) {
+      const x = rand(0, W), y = rand(0, H), r = rand(14, 38);
+      g.beginPath(); g.ellipse(x, y, r, r * rand(0.5, 0.9), rand(0, Math.PI), 0, rand(2, 4.5)); g.stroke();
+    }
+    g.restore();
+  } else if (d === 'lake') {   // Spiegelungen der Uferlichter
+    g.save();
+    for (let i = 0; i < 70; i++) {
+      const x = rand(0, W), h = rand(60, 220), col = pick(['255,210,63', '255,233,168', '188,216,255']);
+      const gr = g.createLinearGradient(0, H, 0, H - h);
+      gr.addColorStop(0, `rgba(${col},0.22)`); gr.addColorStop(1, `rgba(${col},0)`);
+      g.fillStyle = gr; g.fillRect(x, H - h, rand(1.5, 4), h);
+    }
+    g.restore();
+  } else if (d === 'snow') {   // ein paar Schneeverwehungen
+    g.save(); g.fillStyle = 'rgba(255,255,255,0.35)';
+    for (let i = 0; i < 18; i++) { g.beginPath(); g.ellipse(rand(0, W), rand(0, H), rand(30, 80), rand(6, 14), rand(-0.4, 0.4), 0, TAU); g.fill(); }
+    g.restore();
+  }
+}
+// Bewegte Effekte (ohne gespeicherten Zustand: alles aus der Zeit berechnet). layer: 'under' (unter den Figuren) oder 'over'
+const fxHash = (i, k) => { const v = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return v - Math.floor(v); };
+function drawArenaFx(c, layer) {
+  const f = RK.fx; if (!f || reduceMotion) return;
+  const t = realTime, FW = W + PAD * 2, FH = H + PAD * 2;
+  if (f === 'snow' && layer === 'over') {   // Schneefall über allem
+    c.fillStyle = '#ffffff';
+    for (let i = 0; i < 110; i++) {
+      const sp = 22 + fxHash(i, 1) * 40, x = ((fxHash(i, 2) * FW + Math.sin(t * 0.7 + i) * 18 + t * 12) % FW) - PAD, y = ((fxHash(i, 3) * FH + t * sp) % FH) - PAD;
+      c.globalAlpha = 0.35 + fxHash(i, 4) * 0.5; c.beginPath(); c.arc(x, y, 1.2 + fxHash(i, 5) * 2.2, 0, TAU); c.fill();
+    }
+    c.globalAlpha = 1;
+  } else if (f === 'bubbles' && layer === 'under') {   // Luftblasen steigen auf
+    c.strokeStyle = 'rgba(220,255,255,0.55)'; c.lineWidth = 1.5;
+    for (let i = 0; i < 46; i++) {
+      const sp = 18 + fxHash(i, 1) * 34, x = fxHash(i, 2) * W + Math.sin(t * 2 + i) * 6, y = H - ((fxHash(i, 3) * H + t * sp) % H), r = 2 + fxHash(i, 4) * 5;
+      c.globalAlpha = 0.25 + 0.5 * (y / H); c.beginPath(); c.arc(x, y, r, 0, TAU); c.stroke();
+    }
+    c.globalAlpha = 1;
+  } else if (f === 'embers' && layer === 'over') {   // Funken steigen am Rand auf
+    for (let i = 0; i < 60; i++) {
+      const life = (t * (0.3 + fxHash(i, 1) * 0.4) + fxHash(i, 2)) % 1, side = i % 2;
+      const x = fxHash(i, 3) * FW - PAD + Math.sin(t * 3 + i) * 5;
+      const y = side ? H + PAD - life * 70 : -PAD + 40 - life * 40;
+      c.globalAlpha = (1 - life) * 0.9; c.fillStyle = life < 0.4 ? '#ffd27a' : '#ff6a1a';
+      c.beginPath(); c.arc(x, y, 1.4 + (1 - life) * 1.6, 0, TAU); c.fill();
+    }
+    c.globalAlpha = 1;
+  } else if (f === 'lights' && layer === 'under') {   // Uferlichter funkeln
+    for (let i = 0; i < 40; i++) {
+      const tw = 0.5 + 0.5 * Math.sin(t * (1.5 + fxHash(i, 1) * 3) + i * 7);
+      c.globalAlpha = tw * 0.8; c.fillStyle = fxHash(i, 2) > 0.5 ? '#ffe9a8' : '#ffffff';
+      c.beginPath(); c.arc(fxHash(i, 3) * FW - PAD, H + 10 + fxHash(i, 4) * (PAD - 14), 1.6, 0, TAU); c.fill();
+    }
+    c.globalAlpha = 1;
+  }
 }
 
 // Leuchtpunkte (einmal vorbereitet statt teurer Schatten in jedem Bild)
@@ -1324,7 +1533,7 @@ function kickZoom(z) { zoomKick = Math.max(zoomKick, z); }
 function teamLabel(t, long = false) {
   if (match.opp === 'online') return net.names[t];
   if (match.opp === 'local') return long ? (t ? 'SPIELER 2' : 'SPIELER 1') : (t ? 'S2' : 'S1');
-  if (t === 0) return 'DU';
+  if (t === 0) return long ? (wardrobe.team.name ? wardrobe.team.name.toUpperCase() : 'DU') : myShort();
   if (league()) return long ? CUP[match.cup].name.toUpperCase() : CUP[match.cup].short;
   return 'CPU';
 }
@@ -1456,11 +1665,14 @@ function shoot(s, p, direct = false) {
   stats.shots++; tstat[s.team].shots++;
   let spd = 520 + p * 950 + (direct ? 120 : 0);
   if (info.back) spd *= 0.78;
+  const sup = s.pw === 'super';
+  if (sup) { spd *= 1.5; s.pw = null; s.pwT = 0; }   // Superschuss: einmalig
   const a = info.a;
   puck.owner = null; puck.vx = Math.cos(a) * spd; puck.vy = Math.sin(a) * spd; puck.z = 0; puck.vz = 0;
   puck.shotSpeed = spd; puck.shotX = puck.x; puck.shooter = s; puck.hitPost = false; puck.shotAge = 0; puck.direct = direct;
   puck.back = info.back; puck.wrap = info.wrap; puck.lob = false; puck.passer = null;
-  puck.extraDelay = (info.back ? 0.12 : 0) + (info.wrap ? 0.16 : 0);   // der Goalie reagiert später
+  puck.extraDelay = (info.back ? 0.12 : 0) + (info.wrap ? 0.16 : 0) + (sup ? 0.1 : 0);   // der Goalie reagiert später
+  if (sup) { ring(puck.x, puck.y, 90, '#ff4a4a', 0.4); addShake(0.25); kickZoom(0.03); if (screen === 'game') popText(puck.x, puck.y - 34, 'SUPERSCHUSS!', '#ff4a4a', 24); }
   s.pickCD = 0.3; s.charging = false; s.charge = 0; s.follow = 0.2; s.oneTimer = 0; s.back = info.back;
   s.vx -= Math.cos(a) * 90 * p; s.vy -= Math.sin(a) * 90 * p;
   sfx.shot(p); addShake(0.07 + p * 0.22);
@@ -1687,13 +1899,14 @@ function aiThink(s, dt) {
 
 // ================== Bewegung ==================
 function moveSkater(s, ix, iy, dt) {
+  if (frozenBy(s)) { s.vx = s.vy = 0; s.dash = s.dodge = 0; }   // Eiszeit: steht ganz still
   if (s.stun > 0) { s.stun -= dt; ix = iy = 0; }
   if (s.pwT > 0) { s.pwT -= dt; if (s.pwT <= 0) { s.pw = null; s.pwT = 0; } }
   if (s.dash > 0) s.dash -= dt;
   else if (s.dodge > 0) s.dodge -= dt;
   else {
     const turbo = s.pw === 'turbo' ? 1.28 : 1;
-    const maxV = (s.charging ? 215 : (puck.owner === s ? 315 : 340)) * turbo;
+    const maxV = (s.charging ? 215 : (puck.owner === s ? 315 : 340)) * turbo * (RK.slow ? 0.92 : 1);   // Freiluft: stumpferes Eis
     const has = ix !== 0 || iy !== 0;
     const k = has ? 7 * turbo : 1.4;               // ohne Eingabe gleitet man aus
     const sp = Math.hypot(s.vx, s.vy);
@@ -1789,6 +2002,7 @@ function updateGoalie(gk, dt) {
   let delay = (cpuGk ? SKT[1].gkDelay : 0.12) + puck.extraDelay;
   if (goalieTired(gk)) { spd *= 0.45; react *= 0.5; delay += 0.15; }
   gk.x = g.x - g.dir * 20;
+  gk.r = teamPw(1 - gk.team, 'mini') ? 13 : 21;   // Mini-Goalie
   if (puck.shotAge < delay) { gk.vy = 0; return; }   // Reaktionszeit nach einem Schuss
   let ty;
   if ((puck.x - g.x) * g.dir > 0) ty = puck.y < CY ? g.y0 + 12 : g.y1 - 12;   // Puck hinter dem Tor: an den Pfosten
@@ -1829,7 +2043,13 @@ function updateItem(dt) {
   for (const s of skaters) {
     if (!onIce(s) || Math.hypot(item.x - s.x, item.y - s.y) > s.r + 18) continue;
     const P = PW_TYPES[item.type];
-    s.pw = item.type; s.pwT = PW_TIME;
+    s.pw = item.type; s.pwT = P.time || PW_TIME;
+    if (item.type === 'freeze') for (const o of teams[1 - s.team]) {   // Eiszeit: alle Gegner frieren ein
+      if (!onIce(o)) continue;
+      o.stun = Math.max(o.stun, 2.2); o.vx *= 0.1; o.vy *= 0.1; o.charging = false; o.charge = 0;
+      if (puck.owner === o) loosePuck(o, 0, 0);
+      burst(o.x, o.y, 14, ['#a8f0ff', '#ffffff'], 60, 220, 0.5, 3, 3, 5);
+    }
     stats.powerups++;
     sfx.power(); addShake(0.12);
     burst(item.x, item.y, 24, [P.col, '#fff'], 120, 420, 0.5, 2.5, 3, 5);
@@ -1845,6 +2065,7 @@ function updateItem(dt) {
 const pickOrder = [];
 function updatePuck(dt) {
   puck.px = puck.x; puck.py = puck.y; puck.shotAge += dt; puck.passT += dt;
+  puck.r = giantOn() ? 14 : 8;
   const o = puck.owner;
   if (puck.inNet) {
     puck.x += puck.vx * dt; puck.y += puck.vy * dt; puck.z = Math.max(0, puck.z - dt * 150);
@@ -1867,7 +2088,7 @@ function updatePuck(dt) {
         if (puck.vz < -140) { puck.vz = -puck.vz * 0.3; sfx.land(); burst(puck.x, puck.y, 6, iceCols(), 40, 160, 0.3, 2.4); }
         else puck.vz = 0;
       }
-    } else { const f = Math.exp(-0.55 * dt); puck.vx *= f; puck.vy *= f; }
+    } else { const f = Math.exp(-(RK.slow ? 0.95 : 0.55) * dt); puck.vx *= f; puck.vy *= f; }   // Freiluft: Puck bremst stärker
   }
   const hit = collideRink(puck, puck.r, 0.78);
   if (hit > 160 && !o) {
@@ -1923,7 +2144,7 @@ function tryPickup(s) {
   if (s.stun > 0 || !onIce(s)) return false;
   const ds = Math.hypot(puck.x - s.sx, puck.y - s.sy), db = Math.hypot(puck.x - s.x, puck.y - s.y);
   const fast = Math.hypot(puck.vx, puck.vy) > 750;     // harte Schüsse kann man nicht fangen, sie prallen ab
-  const reach = 20 + (s.poke > 0 ? 12 : 0) + (s.pw === 'magnet' ? 14 : 0);
+  const reach = 20 + (s.poke > 0 ? 12 : 0) + (s.pw === 'magnet' ? 14 : 0) + (teamPw(s.team, 'giant') ? 12 : 0);
   if (s.pickCD <= 0 && !fast && (ds < reach || db < s.r + puck.r + 2)) { take(s); return true; }
   if (db < s.r + puck.r) {
     const imp = bounceCircle(puck, s.x, s.y, s.r, puck.r, 0.45);
@@ -1934,7 +2155,7 @@ function tryPickup(s) {
 function trySteal(th, ow, dt) {
   if (!onIce(th) || th.stun > 0 || th.pickCD > 0 || ow.protect > 0) { th.stealT = 0; return; }
   const d = Math.hypot(puck.x - th.sx, puck.y - th.sy);
-  const reach = 20 + (th.poke > 0 ? 14 : 0) + (th.pw === 'magnet' ? 16 : 0);
+  const reach = 20 + (th.poke > 0 ? 14 : 0) + (th.pw === 'magnet' ? 16 : 0) + (teamPw(th.team, 'giant') ? 12 : 0);
   if (d < reach) {
     th.stealT += dt;
     if (isHuman(th) || th.stealT > SKT[th.team].stealTime) {
@@ -3050,7 +3271,17 @@ function drawSkater(c, s, human) {
   c.beginPath(); c.arc(3, 0, r * 0.36, -0.9, 0.9); c.stroke();
   if (FF) drawFists(c, s, FF);
   c.restore();
-  if (s.stun > 0 || (FF && (FF.act === 6 || FF.act === 4))) {   // Sternchen nach einem Check oder K.o.
+  if (s.team === 0 && match.opp !== 'local' && match.opp !== 'online' && !FF && onIce(s)) {   // Rückennummer (Mein Team)
+    const n = String(s.idx ? (wardrobe.team.num % 99) + 1 : wardrobe.team.num);
+    upright(c, s.x - Math.cos(s.face) * 8, s.y - Math.sin(s.face) * 8);
+    c.font = `900 13px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.lineWidth = 2.5; c.strokeStyle = teamD(0); c.strokeText(n, 0, 0.5); c.fillStyle = '#ffffff'; c.fillText(n, 0, 0.5);
+    c.restore();
+  }
+  if (frozenBy(s)) {   // Eiszeit: Spieler steckt in einem Eisblock
+    c.fillStyle = 'rgba(168,240,255,0.35)'; c.strokeStyle = 'rgba(255,255,255,0.85)'; c.lineWidth = 2;
+    c.beginPath(); for (let i = 0; i < 6; i++) { const a = (i * TAU) / 6 + 0.3; c[i ? 'lineTo' : 'moveTo'](s.x + Math.cos(a) * (s.r + 9), s.y + Math.sin(a) * (s.r + 9)); } c.closePath(); c.fill(); c.stroke();
+  } else if (s.stun > 0 || (FF && (FF.act === 6 || FF.act === 4))) {   // Sternchen nach einem Check oder K.o.
     c.fillStyle = GOLD;
     for (let i = 0; i < 3; i++) {
       const a = realTime * 8 + (i * TAU) / 3;
@@ -3188,7 +3419,8 @@ function drawFightTouch(c) {   // Touch: drei Zonen für die Fäuste
 
 function drawGoalie(c, gk) {
   const g = goals[gk.team], col = teamC(gk.team), dark = gk.team ? '#5a0d2b' : teamD(0);
-  c.save(); c.translate(gk.x, gk.y);
+  const k = teamPw(1 - gk.team, 'mini') ? 0.62 : 1;
+  c.save(); c.translate(gk.x, gk.y); c.scale(k, k); gk.r = 21;   // Mini-Goalie: alles kleiner zeichnen
   c.fillStyle = 'rgba(0,0,0,0.35)'; ellipse(c, 5, 7, gk.r * 0.8, gk.r * 1.1);
   c.rotate(g.dir > 0 ? Math.PI : 0);
   c.fillStyle = '#f2f6ff'; ellipse(c, 6, -gk.r * 0.62, 9, 8); ellipse(c, 6, gk.r * 0.62, 9, 8);   // Schoner
@@ -3206,6 +3438,7 @@ function drawGoalie(c, gk) {
     c.globalAlpha = 1 - k; c.fillStyle = '#d6b8ff'; c.font = `900 italic 15px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle';
     c.fillText('Zz', 0, 0); c.globalAlpha = 1; c.restore();
   }
+  gk.r = 21 * k;
 }
 function drawItem(c) {
   if (!item) return;
@@ -3225,6 +3458,7 @@ function drawItem(c) {
   c.globalAlpha = 1;
 }
 function drawPuck(c) {
+  puck.r = giantOn() ? 14 : 8;   // auch beim Online-Gast
   const spd = Math.hypot(puck.vx, puck.vy);
   if (!puck.owner && spd > 200) {   // Leuchtspur
     const col = puck.direct ? GOLD : teamC(puck.shooter ? puck.shooter.team : 0), k = clamp(spd / 1300, 0, 1), n = trail.length;
@@ -3272,6 +3506,7 @@ function drawParts(c) {
 function drawWorld(c) {
   c.drawImage(rinkCv, -PAD, -PAD, W + PAD * 2, H + PAD * 2);
   c.drawImage(marksCv, -PAD, -PAD, W + PAD * 2, H + PAD * 2);
+  drawArenaFx(c, 'under');
   // Torlicht
   c.globalCompositeOperation = 'lighter';
   for (const g of goals) {
@@ -3302,6 +3537,7 @@ function drawWorld(c) {
   drawChargeUI(c);
   drawPuck(c);
   drawParts(c);
+  drawArenaFx(c, 'over');
 }
 // Strafbank oben am Rand
 function drawPenBox(c) {
@@ -3815,6 +4051,13 @@ function renderAch() {
   }).join('');
 }
 function renderWard() {
+  $('tmName').value = wardrobe.team.name; $('tmShort').value = wardrobe.team.short; $('tmNum').value = wardrobe.team.num;
+  const lg = $('logoGrid'); lg.innerHTML = '';
+  for (const L of LOGOS) {
+    const b = document.createElement('button');
+    b.className = 'sw' + (wardrobe.team.logo === L.id ? ' on' : ''); b.dataset.kind = 'logo'; b.dataset.id = L.id;
+    b.appendChild(logoImg(L.id, T0.c)); b.appendChild(document.createTextNode(L.name)); lg.appendChild(b);
+  }
   $('wardSum').innerHTML = `Gesamtpunkte: <b>${fmt(totalPts)}</b>`;
   $('jerseyGrid').innerHTML = JERSEYS.map((j) => {
     const lock = totalPts < j.cost, on = T0.id === j.id;
@@ -4465,6 +4708,10 @@ function wardClick(e) {
     wardrobe.horn = b.dataset.id; store.set('eisduell-garderobe', wardrobe); renderWard();
     return;
   }
+  if (b.dataset.kind === 'logo') {   // Team-Logo wählen
+    wardrobe.team.logo = b.dataset.id; store.set('eisduell-garderobe', wardrobe); buildRink(); renderWard(); sfx.click();
+    return;
+  }
   if (b.classList.contains('locked')) return;
   if (b.dataset.kind === 'jersey') wardrobe.jersey = b.dataset.id; else wardrobe.rink = b.dataset.id;
   store.set('eisduell-garderobe', wardrobe);
@@ -4473,6 +4720,18 @@ function wardClick(e) {
 $('jerseyGrid').addEventListener('click', wardClick);
 $('rinkGrid').addEventListener('click', wardClick);
 $('hornGrid').addEventListener('click', wardClick);
+$('logoGrid').addEventListener('click', wardClick);
+// Mein Team: Eingaben sofort säubern und speichern
+function teamInput(id, clean, apply) {
+  $(id).addEventListener('input', (e) => {
+    const v = clean(e.target.value); if (v !== e.target.value) e.target.value = v;
+    apply(v); store.set('eisduell-garderobe', wardrobe); buildRink();
+  });
+}
+teamInput('tmName', cleanTeamName, (v) => { wardrobe.team.name = v.trim(); });
+teamInput('tmShort', cleanShort, (v) => { wardrobe.team.short = v; });
+teamInput('tmNum', (v) => String(v).replace(/\D/g, '').slice(0, 2), (v) => { wardrobe.team.num = cleanNum(v); });
+$('tmNum').addEventListener('blur', (e) => { e.target.value = wardrobe.team.num; });
 $('menuTabs').addEventListener('click', (e) => { const t = e.target.dataset && e.target.dataset.tab; if (t) { setTab(t); e.target.blur(); } });
 $('btnFull').addEventListener('click', (e) => { e.currentTarget.blur(); toggleFull(); });
 $('ovName').addEventListener('input', (e) => {

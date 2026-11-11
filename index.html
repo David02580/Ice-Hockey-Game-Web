@@ -227,6 +227,21 @@
   table.league tr.me td { background: rgba(255, 210, 63, 0.14); color: #fff; }
   table.league tr.me td.pk { color: var(--gold); }
   table.league i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+  /* Mini-Spiele und Karriere */
+  .minis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; text-align: left; }
+  .mini { display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: 14px; border: 2px solid rgba(46, 230, 255, 0.25);
+    background: rgba(46, 230, 255, 0.06); color: var(--text); font: 600 12.5px/1.4 var(--font); cursor: pointer; text-align: left; }
+  .mini:hover { border-color: var(--cyan); }
+  .mini b { font: 900 italic 16px var(--font); color: #fff; letter-spacing: 0.03em; }
+  .mini small { color: var(--gold); font-weight: 800; font-size: 12px; }
+  @media (max-width: 400px) { .minis { grid-template-columns: 1fr; } }
+  .career { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .career div { background: rgba(46, 230, 255, 0.06); border: 1px solid rgba(46, 230, 255, 0.15); border-radius: 12px; padding: 8px 6px; text-align: center; }
+  .career b { display: block; font: 900 italic 20px var(--font); color: #fff; }
+  .career span { font-size: 10.5px; font-weight: 800; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
+  .career .wide { grid-column: span 3; }
+  .career .minirow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0; background: none; border: 0; }
+  .career .minirow b { font-size: 17px; }
   /* Mein Team */
   .teamform { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 8px; }
   .teamform label { display: flex; flex-direction: column; align-items: center; gap: 3px; font: 800 10.5px var(--font); letter-spacing: 0.14em; color: var(--muted); text-transform: uppercase; }
@@ -291,6 +306,7 @@
         <div class="daily" id="daily"><b>HERAUSFORDERUNG DES TAGES</b><span id="dailyText"></span></div>
         <div class="row" style="margin-top:8px">
           <button class="btn ghost small" id="btnTrain">Übung</button>
+          <button class="btn ghost small" id="btnMini">Mini-Spiele</button>
           <button class="btn ghost small" id="btnAch">★ Erfolge <span id="achCount"></span></button>
           <button class="btn ghost small" id="btnWard">Garderobe</button>
         </div>
@@ -298,7 +314,7 @@
         <div class="daily hide" id="installTip"><b>ALS APP AUFS HANDY</b><span id="installText"></span> <button class="btn small hide" id="btnInstall">Installieren</button></div>
       </div>
       <div class="mright">
-        <div class="tabs" id="menuTabs"><button data-tab="ctl" class="on">Steuerung</button><button data-tab="tips">Tipps</button><button data-tab="hs" id="tabHs">Bestenliste</button><button data-tab="tab" id="tabTab">Tabelle</button></div>
+        <div class="tabs" id="menuTabs"><button data-tab="ctl" class="on">Steuerung</button><button data-tab="tips">Tipps</button><button data-tab="hs" id="tabHs">Bestenliste</button><button data-tab="tab" id="tabTab">Tabelle</button><button data-tab="car">Karriere</button></div>
         <div class="tabpage" id="pg-ctl">
           <div class="help" id="help1">
             <div><b>TASTATUR</b><kbd>WASD</kbd> / Pfeile: fahren<br><kbd>Leertaste</kbd> antippen: Handgelenkschuss<br><kbd>Leertaste</kbd> halten: Schlagschuss<br><kbd>Shift</kbd>: Check · mit Puck: Pass<br><kbd>E</kbd>: Lupfer · <kbd>Q</kbd>: Spieler wechseln<br>2× Richtung tippen: Täuschen</div>
@@ -332,6 +348,10 @@
           <table class="league" id="tabMenu"></table>
           <p class="tip">Sieg 3 Punkte · Sieg nach Verlängerung oder Penaltys 2 · Niederlage nach Verlängerung oder Penaltys 1 · Niederlage 0.</p>
         </div>
+        <div class="tabpage hide" id="pg-car">
+          <h2 id="carTitle">Karriere</h2>
+          <div class="career" id="carGrid"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -364,6 +384,16 @@
     <p class="tip" style="margin-top:4px"><b>Klappt es im Schul-WLAN nicht?</b> Viele Schulnetze sperren Direktverbindungen zwischen Laptops. Macht auf einem Handy einen Hotspot (das Handy wird zum WLAN) und verbindet beide Laptops damit. Dann läuft das Spiel direkt zwischen euch und braucht kaum mobile Daten.</p>
     <div class="row"><button class="btn ghost small" id="btnNetBack">Zurück<span class="keyhint">ESC</span></button></div>
     <p class="small">Zum Verbinden nutzt das Spiel den kostenlosen Dienst PeerJS (peerjs.com). Er sieht nur den Raumcode und die Netzwerkadressen der beiden Laptops. Danach laufen die Spieldaten direkt zwischen euch. Wer eröffnet, spielt Cyan und rechnet das Spiel; wer beitritt, spielt Pink und schiesst nach links.</p>
+  </div>
+</div>
+
+<!-- Mini-Spiele -->
+<div id="miniPanel" class="overlay hidden">
+  <div class="panel wide" style="width:min(640px,100%)">
+    <div class="kicker">KURZ UND KNACKIG</div>
+    <h1 style="font-size:clamp(38px,10vw,56px)">MINI-SPIELE</h1>
+    <div class="minis" id="miniList"></div>
+    <div class="row"><button class="btn" id="btnMiniBack">Zurück<span class="keyhint">ESC</span></button></div>
   </div>
 </div>
 
@@ -1521,7 +1551,8 @@ function newTs() { return { shots: 0, saves: 0, poss: 0, checks: 0, passes: 0, p
 let tstat = [newTs(), newTs()];          // Statistik je Team für den Schlussbildschirm
 function newGs() {
   return { goals: 0, conceded: 0, maxCombo: 0, hammer: 0, direct: 0, distance: 0, post: 0, checks: 0, steals: 0, powerups: 0, dodges: 0,
-    back: 0, lob: 0, wrap: 0, assist: 0, pp: 0, fightWin: 0, ko: 0, otWin: false, cupWin: false, seasonWin: false, soWin: false, won: false };
+    back: 0, lob: 0, wrap: 0, assist: 0, pp: 0, fightWin: 0, ko: 0, otWin: false, cupWin: false, seasonWin: false, soWin: false, won: false,
+    types: {} };   // types: Tore je Schussart (für die Karriere)
 }
 gs = newGs();
 
@@ -1631,6 +1662,7 @@ function skillFor(d, K) {
 function updateSkill() {
   let d = 0.45;
   if (screen === 'game' && match.opp === 'train') d = -0.3;   // Übung: gemütliche Gegner
+  else if (screen === 'game' && miniOn()) d = { ziel: 0.1, slalom: -0.2, penalty: 0.45, goalie: 0.5 }[mg.kind];
   else if (screen === 'game' && solo()) {
     const cup = league(), off = cup ? CUP[match.cup].off : LV().off, mul = cup ? 1 : LV().mul;
     d = clamp(off + mul * (0.1 + goalsFor * 0.11 - goalsAgainst * 0.06 + (1 - Math.min(1, timeLeft / MATCH_TIME)) * 0.25), -0.3, 1);
@@ -1961,7 +1993,7 @@ function skaterVsSkater(a, b) {
   // Zu viele harte Checks: Strafe (ein Check gegen einen Spieler ohne Puck zählt doppelt)
   if (screen === 'game' && !shootout) {
     att.foul += hadPuck ? 1 : 2;
-    if (att.foul >= 3 && match.opp !== 'train') givePenalty(att);
+    if (att.foul >= 3 && match.opp !== 'train' && match.opp !== 'mini') givePenalty(att);
   }
 }
 
@@ -1994,6 +2026,7 @@ const iceCount = (t) => teams[t].filter(onIce).length;
 // ================== Goalie ==================
 function goalieTired(gk) { return teamPw(1 - gk.team, 'tired'); }
 function updateGoalie(gk, dt) {
+  if (gk.team === 0 && screen === 'game' && miniOn() && mg.kind === 'goalie') { humanGoalie(gk, dt); return; }
   const g = goals[gk.team];
   const soloG = screen === 'game' && solo(), L = league() ? LEVELS[1] : LV();
   const cpuGk = gk.team === 1 && soloG;
@@ -2204,6 +2237,7 @@ function onGoal(team, g) {
   if (screen !== 'game') { nextLean = pick([-1, 0, 1]); return; }   // Demo im Startbildschirm
   vibrate(team === 0 ? [60, 40, 80] : 50); rumble(1, 300);
   if (trainOn()) { trainGoal(team); return; }
+  if (miniOn()) { miniGoal(team); return; }
   if (shootout) { attemptDone(true, info.tag); return; }
   replay = { goalK: recCount, team };
   if (overtime) otWinner = team;
@@ -2234,6 +2268,8 @@ function onGoal(team, g) {
       if (info.wrap) gs.wrap++;
       if (info.assist) gs.assist++;
       if (info.pp) gs.pp++;
+      const typ = info.lob ? 'lob' : info.wrap ? 'wrap' : info.direct ? 'direct' : info.back ? 'back' : info.hammer ? 'hammer' : 'wrist';
+      gs.types[typ] = (gs.types[typ] || 0) + 1;
     }
     addShake(0.75); setFlash(0.35, '#ffffff');
     sfx.horn(hornFor(0));
@@ -2249,6 +2285,7 @@ function onGoal(team, g) {
 function afterGoal() {
   replay = null;
   if (trainOn() && screen === 'game') { trainAfterGoal(); return; }
+  if (miniOn() && screen === 'game') { miniAfterGoal(); return; }
   if (overtime && otWinner !== null) endGame(); else faceoff(nextLean);
 }
 
@@ -2577,6 +2614,252 @@ function drawTrainHUD(c) {   // Aufgabe oben in der Mitte
   for (const l of wrapLines(c, L.goal, maxW)) { c.fillText(l, vw / 2, y); y += small ? 17 : 20; }
   c.font = `600 ${small ? 12 : 13}px ${FONT}`; c.fillStyle = '#c4d8ee';
   for (const l of wrapLines(c, L.how[inputKind()], maxW)) { c.fillText(l, vw / 2, y); y += small ? 15 : 17; }
+}
+
+// ================== Karriere-Statistik ==================
+// Zählt Spiele gegen den Computer (Spielen, Turnier, Saison) ab dem ersten Spiel mit dieser Version.
+const SHOT_NAMES = { wrist: 'Handgelenkschuss', hammer: 'Schlagschuss', back: 'Rückhand', lob: 'Lupfer', wrap: 'Bauerntrick', direct: 'Direktschuss' };
+let career = store.get('eisduell-karriere', null);
+if (!career || typeof career !== 'object' || typeof career.games !== 'number') career = null;
+function careerRecord(winner) {
+  if (!career) career = { since: new Date().toLocaleDateString('de-CH'), games: 0, wins: 0, goals: 0, conceded: 0, shots: 0, types: {}, streak: 0, best: 0, cups: 0, seasons: 0, points: 0 };
+  const c = career, won = winner === 0;
+  c.games++; if (won) c.wins++;
+  c.goals += goalsFor; c.conceded += goalsAgainst; c.shots += tstat[0].shots; c.points += score;
+  for (const [k, v] of Object.entries(gs.types || {})) c.types[k] = (c.types[k] || 0) + v;
+  c.streak = won ? c.streak + 1 : 0; c.best = Math.max(c.best, c.streak);
+  if (gs.cupWin) c.cups++; if (gs.seasonWin) c.seasons++;
+  store.set('eisduell-karriere', c);
+}
+function renderCareer() {
+  const c = career, tile = (v, l, cls = '') => `<div class="${cls}"><b>${esc(v)}</b><span>${esc(l)}</span></div>`;
+  if (!c) { $('carTitle').textContent = 'Karriere'; $('carGrid').innerHTML = '<div class="wide"><span>Noch keine Spiele gezählt. Spiel gegen den Computer, im Turnier oder in der Saison – ab jetzt wird alles festgehalten.</span></div>' + miniTiles(tile); return; }
+  const fav = Object.entries(c.types).sort((a, b) => b[1] - a[1])[0];
+  const pct = (a, b) => (b ? Math.round((a / b) * 100) + '%' : '–');
+  $('carTitle').textContent = 'Karriere seit ' + c.since;
+  $('carGrid').innerHTML = tile(fmt(c.games), 'Spiele') + tile(fmt(c.wins), 'Siege') + tile(pct(c.wins, c.games), 'Siegquote')
+    + tile(fmt(c.goals), 'Tore') + tile(fmt(c.conceded), 'Gegentore') + tile(pct(c.goals, c.shots), 'Trefferquote')
+    + tile(c.best, 'Längste Siegesserie') + tile(c.cups, 'Turniersiege') + tile(c.seasons, 'Meistertitel')
+    + tile(fav ? SHOT_NAMES[fav[0]] + ' (' + fav[1] + ')' : '–', 'Lieblings-Schussart', 'wide')
+    + tile(fmt(fightTotal), 'Schlägereien gewonnen') + tile(achieved.length + '/' + ACH.length, 'Erfolge') + tile(fmt(totalPts), 'Gesamtpunkte')
+    + miniTiles(tile);
+}
+function miniTiles(tile) {   // Mini-Spiel-Rekorde
+  const name = { ziel: 'Rekord Zielschiessen', slalom: 'Rekord Slalom', penalty: 'Rekord Penaltys', goalie: 'Rekord Goalie' };
+  return '<div class="wide minirow">' + Object.keys(MINIS).map((k) => { const v = miniRec[k]; return tile(typeof v === 'number' ? (MINIS[k].low ? v.toFixed(1).replace('.', ',') + ' s' : v) : '–', name[k]); }).join('') + '</div>';
+}
+
+// ================== Mini-Spiele ==================
+// ziel: 60 s Scheiben im Tor treffen · slalom: um 6 Hütchen und ins Tor, auf Zeit
+// penalty: 10 Penaltys · goalie: du bist der Torhüter, 20 Angriffe
+const MINIS = {
+  ziel: { title: 'ZIELSCHIESSEN', desc: '60 Sekunden: Triff die leuchtende Scheibe im Tor. Jeder Treffer zählt.', unit: 'Treffer', low: false, pts: 50 },
+  slalom: { title: 'SLALOM', desc: 'Fahr mit dem Puck abwechselnd über und unter den Hütchen durch, dann ins Tor. Auf Zeit!', unit: 's', low: true, pts: 0 },
+  penalty: { title: 'PENALTY-SERIE', desc: '10 Penaltys gegen den Goalie. Wie viele triffst du?', unit: 'Tore', low: false, pts: 80 },
+  goalie: { title: 'GOALIE', desc: 'Du stehst im Tor: Halte möglichst viele von 20 Angriffen. Hechtsprung mit SCHUSS.', unit: 'Paraden', low: false, pts: 40 },
+};
+const MINI_HELP = {
+  ziel: { touch: 'Links fahren · SCHUSS: auf die Scheibe zielen', keys: 'WASD fahren · Leertaste: Schuss · Fahrtrichtung = Schussrichtung', mouse: 'Maus zielt · Linksklick: Schuss' },
+  slalom: { touch: 'Grüner Pfeil zeigt die Seite. Puck nicht verlieren!', keys: 'Grüner Pfeil zeigt die Seite. Puck nicht verlieren!', mouse: 'Grüner Pfeil zeigt die Seite. Puck nicht verlieren!' },
+  penalty: { touch: 'Fahr auf den Goalie zu, täusch ihn und schiess', keys: 'Fahr auf den Goalie zu, täusch ihn (2× Richtung) und schiess', mouse: 'Fahr auf den Goalie zu, täusch ihn (Leertaste) und schiess' },
+  goalie: { touch: 'Joystick hoch/runter: Goalie bewegen · SCHUSS: Hechtsprung', keys: 'W/S oder ↑/↓: Goalie bewegen · Leertaste: Hechtsprung', mouse: 'Maus hoch/runter: Goalie bewegen · Linksklick: Hechtsprung' },
+};
+const SLALOM = [300, 430, 560, 690, 820, 950].map((x, i) => ({ x, y: CY, up: i % 2 === 0 }));   // up: oben vorbei
+const TARGETS = [CY - 54, CY - 22, CY + 22, CY + 54];
+let miniRec = store.get('eisduell-minispiele', {}); if (!miniRec || typeof miniRec !== 'object') miniRec = {};
+let mg = null, nextMini = 'ziel';
+const miniOn = () => match.opp === 'mini' && !!mg;
+const miniRecText = (k) => {
+  const v = miniRec[k]; if (typeof v !== 'number') return 'Noch kein Rekord';
+  return 'Rekord: ' + (MINIS[k].low ? v.toFixed(1).replace('.', ',') + ' s' : v + ' ' + MINIS[k].unit);
+};
+function miniGive(s) {   // Puck an den Stock
+  resetPuckFlags(); puck.inNet = false; puck.vx = puck.vy = 0; puck.shooter = s; puck.passer = null; puck.assist = null; puck.lastTeam = s.team;
+  s.sx = s.x + Math.cos(s.face) * (s.r + 12); s.sy = s.y + Math.sin(s.face) * (s.r + 12);
+  puck.owner = s; puck.x = puck.px = s.sx; puck.y = puck.py = s.sy;
+  for (const t of trail) { t.x = puck.x; t.y = puck.y; }
+}
+function miniStart() {
+  const k = MINIS[match.mini] ? match.mini : 'ziel';
+  mg = { kind: k, t: 0, score: 0, n: 0, k: 0, res: [], lost: 0, at: 0, shot: false, shotT: 0, dive: 0, rec: 0, diveDir: 1, prevShoot: false, done: false, target: pick(TARGETS), tFlash: 0 };
+  miniSetup(true);
+}
+function miniSetup(first = false) {   // Ausgangslage für einen Versuch
+  resetSkaters(); item = null; fight = null; fightAsk = null; replay = null;
+  for (const s of skaters) { s.pen = 0; s.foul = 0; s.pw = null; }
+  const me = teams[0][0], op = teams[1][0]; active[0] = me;
+  op.out = true; op.x = op.y = -1000;
+  puck.owner = null; puck.inNet = false; resetPuckFlags(); puck.shooter = null; puck.passer = null; puck.assist = null; puck.lastTeam = null; puck.shotAge = 9;
+  for (const gk of goalies) gk.y = gk.ty = CY;
+  mg.at = 0; mg.shot = false; mg.lost = 0;
+  let title = MINIS[mg.kind].title, sub = '';
+  if (mg.kind === 'ziel') { me.x = W / 2 + 60; me.y = CY; me.face = 0; miniGive(me); }
+  else if (mg.kind === 'slalom') { me.x = 150; me.y = CY; me.face = 0; miniGive(me); mg.px = me.x; }
+  else if (mg.kind === 'penalty') { me.x = W / 2 - 40; me.y = CY; me.face = 0; miniGive(me); title = 'PENALTY ' + (mg.res.length + 1) + '/10'; }
+  else if (mg.kind === 'goalie') {   // du bist Goalie links, der Computer greift an
+    me.out = true; me.x = me.y = -1000;
+    op.out = false; op.x = rand(380, 560); op.y = rand(100, H - 100); op.face = Math.PI;
+    miniGive(op); title = 'ANGRIFF ' + (mg.n + 1) + '/20'; mg.shotTaken = false;
+  }
+  phase = 'intro'; phaseT = 0; introLen = first ? 1.1 : 0.6; aiDelay = mg.kind === 'goalie' ? 0.3 : 0;
+  showBanner(title, sub, GOLD, '', introLen);
+}
+function miniTick(dt) {   // läuft nur, solange gespielt wird
+  const me = teams[0][0], k = mg.kind;
+  mg.t += dt; mg.at += dt; mg.tFlash = Math.max(0, mg.tFlash - dt);
+  if (k === 'ziel') {
+    if (mg.t >= 60) { miniFinish(); return; }
+    // Treffer: Puck fliegt durch die Scheibe vor dem Tor
+    if (!puck.owner && puck.shooter === me && Math.hypot(puck.x - (GL_R - 6), puck.y - mg.target) < 20 && puck.shotAge < 2) {
+      mg.score++; mg.tFlash = 0.4; sfx.post(); addShake(0.2);
+      burst(GL_R - 6, mg.target, 30, [GOLD, '#fff', GREEN], 120, 420, 0.6, 3, 3, 5);
+      popText(GL_R - 60, mg.target - 30, 'TREFFER!', GOLD, 22);
+      let nt; do nt = pick(TARGETS); while (nt === mg.target); mg.target = nt;
+      puck.shooter = null;   // derselbe Schuss zählt nur einmal
+    }
+    if (puck.owner === me) mg.lost = 0; else { mg.lost += dt; if (mg.lost > 1.6 && !puck.inNet) { mg.lost = 0; miniGive(me); ring(me.x, me.y, 40, GOLD, 0.3); } }
+  } else if (k === 'slalom') {
+    if (mg.t >= 60) { miniFinish(); return; }
+    for (const c of SLALOM) { bounceCircle(me, c.x, c.y, 11, me.r, 0.3); }
+    const c = SLALOM[mg.k];
+    if (c && mg.px < c.x && me.x >= c.x) {   // am Hütchen vorbei
+      const ok = c.up ? me.y < c.y - 12 : me.y > c.y + 12;
+      if (!ok) popText(me.x, me.y - 40, 'ANDERE SEITE!', PINK, 18);
+      else if (puck.owner !== me) popText(me.x, me.y - 40, 'MIT PUCK!', PINK, 18);
+      else { mg.k++; sfx.switch(); ring(c.x, c.y, 40, GREEN, 0.35); if (mg.k === SLALOM.length) popText(me.x, me.y - 40, 'JETZT INS TOR!', GREEN, 20); }
+    }
+    mg.px = me.x;
+  } else if (k === 'penalty') {
+    if (!mg.shot && puck.owner !== me) { mg.shot = true; mg.shotT = mg.at; }
+    if ((mg.shot && mg.at - mg.shotT > 1.3) || mg.at > 6) {
+      mg.res.push(false); sfx.save();
+      showBanner('GEHALTEN', '', PINK, '', 0.9); phase = 'goal'; goalTimer = 1.0;
+    }
+  } else if (k === 'goalie') {
+    const op = teams[1][0];
+    if (!puck.owner && puck.shooter === op && puck.shotAge < 0.05) { mg.shotTaken = true; mg.shotT = mg.at; }
+    if ((mg.shotTaken && mg.at - mg.shotT > 1.4) || mg.at > 8) {   // Angriff vorbei, ohne Tor
+      if (mg.shotTaken) { mg.score++; mg.n++; showBanner('PARADE!', mg.score + ' gehalten', teamC(0), '', 0.8); sfx.achieve(); }
+      phase = 'goal'; goalTimer = 0.8;
+    }
+  }
+}
+function humanGoalie(gk, dt) {   // Goalie-Modus: du steuerst den linken Torhüter
+  const g = goals[0], C = ctl[0];
+  gk.x = g.x - g.dir * 20;
+  let vy;
+  if (mouseOn() && mouse.has) vy = clamp((screenToWorld(mouse.x, mouse.y).y - gk.y) / 30, -1, 1);
+  else { const v = readInput(0); vy = v.y; }
+  if (mg.dive > 0) { mg.dive -= dt; gk.y += mg.diveDir * 640 * dt; gk.r = 28; }
+  else { gk.r = 21; if (mg.rec > 0) mg.rec -= dt; else gk.y += clamp(vy, -1, 1) * 340 * dt; }
+  gk.y = clamp(gk.y, g.y0 - 10, g.y1 + 10); gk.ty = gk.y;
+  const down = shootDown(C);
+  if (down && !mg.prevShoot && mg.dive <= 0 && mg.rec <= 0 && phase === 'play') {
+    mg.dive = 0.26; mg.rec = 0.5; mg.diveDir = Math.sign(vy) || Math.sign(puck.y - gk.y) || 1; sfx.whoosh(); vibrate(15);
+  }
+  mg.prevShoot = down;
+}
+function miniGoal(team) {   // Tor im Mini-Spiel
+  const k = mg.kind;
+  if (k === 'ziel') { goalTimer = 0.35; slowmo = 0; return; }   // weiter geht's
+  if (k === 'slalom') {
+    if (team === 0 && mg.k >= SLALOM.length) { mg.done = true; sfx.horn(hornFor(0)); showBanner('ZIEL!', mg.t.toFixed(1).replace('.', ',') + ' Sekunden', GREEN, '', 1.2); }
+    else { goalTimer = 0.4; slowmo = 0; popText(GL_R - 80, CY - 60, team === 0 ? 'ERST ALLE HÜTCHEN!' : '', PINK, 18); }
+    return;
+  }
+  if (k === 'penalty') { mg.res.push(true); sfx.horn(hornFor(0)); showBanner('TOR!', mg.res.filter(Boolean).length + ' von ' + mg.res.length, teamC(0), '', 1.0); goalTimer = 1.1; return; }
+  if (k === 'goalie') { mg.n++; sfx.aww(); showBanner('TOR', 'Nächster Angriff', PINK, '', 0.8); goalTimer = 0.9; }
+}
+function miniAfterGoal() {   // nach Tor oder abgeschlossenem Versuch
+  const k = mg.kind, me = teams[0][0];
+  if (k === 'ziel') { if (mg.t >= 60) miniFinish(); else { phase = 'play'; miniGive(me); } return; }
+  if (k === 'slalom') {
+    if (mg.done) { miniFinish(); return; }
+    phase = 'play'; if (puck.inNet) { puck.inNet = false; puck.x = puck.px = GL_R - 140; puck.y = puck.py = CY; puck.vx = puck.vy = 0; puck.owner = null; }
+    return;
+  }
+  if (k === 'penalty') { if (mg.res.length >= 10) miniFinish(); else miniSetup(); return; }
+  if (k === 'goalie') { if (mg.n >= 20) miniFinish(); else miniSetup(); }
+}
+function miniResult() {
+  const k = mg.kind;
+  if (k === 'slalom') return mg.done ? Math.round(mg.t * 10) / 10 : null;
+  if (k === 'penalty') return mg.res.filter(Boolean).length;
+  return mg.score;
+}
+function miniFinish() {
+  if (screen !== 'game') return;
+  screen = 'over'; resetInputs(); cv.classList.remove('aim'); sfx.buzzer();
+  const k = mg.kind, M = MINIS[k], v = miniResult(), old = miniRec[k];
+  const better = v !== null && (typeof old !== 'number' || (M.low ? v < old : v > old));
+  if (better) { miniRec[k] = v; store.set('eisduell-minispiele', miniRec); }
+  const pts = v === null ? 0 : (M.low ? Math.max(0, Math.round((60 - v) * 15)) : v * M.pts);
+  const unlocked = pts > 0 ? addTotal(pts) : [];
+  showBanner(better ? 'NEUER REKORD!' : 'FERTIG!', '', better ? GOLD : '#ffffff', '', 1.2);
+  if (better) burst(W / 2, CY, 70, [GOLD, '#fff', GREEN], 150, 650, 1.4, 5, 1, 2);
+  $('ovResult').innerHTML = '';
+  $('ovVerdict').textContent = M.title + (better ? ' · NEUER REKORD!' : '');
+  $('ovScore').textContent = v === null ? 'Zeit um' : (M.low ? v.toFixed(1).replace('.', ',') + ' s' : String(v));
+  $('ovBreak').textContent = v === null ? 'Nicht ins Ziel gekommen' : (M.low ? 'Zeit' : M.unit + (k === 'goalie' ? ' von 20' : (k === 'penalty' ? ' von 10' : ' in 60 Sekunden')));
+  const ex = [better && typeof old === 'number' ? `<span class="g">Alter Rekord: ${M.low ? old.toFixed(1).replace('.', ',') + ' s' : old}</span>` : miniRecText(k)];
+  if (pts) ex.push(`+${fmt(pts)} Gesamtpunkte`);
+  if (unlocked.length) ex.push(`<span class="g">Neu in der Garderobe: ${unlocked.map(esc).join(', ')}</span>`);
+  $('ovExtra').innerHTML = ex.join('<br>');
+  $('ovStats').innerHTML = ''; $('ovTable').classList.add('hide');
+  $('ovRecord').style.display = 'none'; $('ovHsTitle').classList.add('hide'); $('hsOver').classList.add('hide');
+  $('againLabel').textContent = 'Nochmal';
+  canRestartAt = performance.now() + 900;
+  setTimeout(() => { if (screen === 'over') showOnly(overEl); }, 1000);
+}
+function miniFreeze(s) { return miniOn() && !(mg.kind === 'goalie' && s.team === 1); }   // nur der Angreifer im Goalie-Modus spielt
+function drawMiniWorld(c) {   // Scheibe, Hütchen
+  if (!miniOn() || screen !== 'game') return;
+  if (mg.kind === 'ziel') {
+    const x = GL_R - 6, y = mg.target, p = 1 + 0.1 * Math.sin(realTime * 7), f = mg.tFlash > 0;
+    c.globalCompositeOperation = 'lighter'; c.drawImage(glowGold, x - 34, y - 34, 68, 68); c.globalCompositeOperation = 'source-over';
+    for (const [r, col] of [[19, GOLD], [12, '#ffffff'], [5, PINK]]) { c.strokeStyle = f ? GREEN : col; c.lineWidth = 3.5; c.beginPath(); c.arc(x, y, r * p, 0, TAU); c.stroke(); }
+  } else if (mg.kind === 'slalom') {
+    SLALOM.forEach((cn, i) => {
+      const done = i < mg.k, next = i === mg.k;
+      c.fillStyle = done ? 'rgba(77,255,138,0.35)' : '#ff8a3d';
+      c.beginPath(); c.arc(cn.x, cn.y, 11, 0, TAU); c.fill();
+      c.strokeStyle = '#ffffff'; c.lineWidth = 2.5; c.beginPath(); c.arc(cn.x, cn.y, 6, 0, TAU); c.stroke();
+      if (next) {   // Pfeil: auf dieser Seite vorbei
+        const dy = cn.up ? -1 : 1, yy = cn.y + dy * 46, b = 1 + 0.15 * Math.sin(realTime * 6);
+        c.fillStyle = GREEN; c.beginPath(); c.moveTo(cn.x + 18 * b, yy); c.lineTo(cn.x - 10, yy - 12); c.lineTo(cn.x - 10, yy + 12); c.closePath(); c.fill();
+        c.strokeStyle = 'rgba(77,255,138,0.35)'; c.setLineDash([6, 6]); c.lineWidth = 2; c.beginPath(); c.moveTo(cn.x, cn.y + dy * 14); c.lineTo(cn.x, cn.y + dy * 120); c.stroke(); c.setLineDash([]);
+      }
+    });
+  }
+}
+function drawMiniHUD(c) {   // Anzeige oben in der Mitte
+  const M = MINIS[mg.kind], small = vh < 500, top = (small ? 6 : 10) + safeTop;
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  c.font = `900 italic ${small ? 11 : 12}px ${FONT}`; c.fillStyle = GOLD; c.fillText(M.title + ' · ' + miniRecText(mg.kind).toUpperCase(), vw / 2, top);
+  let big = '';
+  if (mg.kind === 'ziel') big = `${Math.max(0, Math.ceil(60 - mg.t))} s · ${mg.score} TREFFER`;
+  else if (mg.kind === 'slalom') big = `${mg.t.toFixed(1).replace('.', ',')} s · HÜTCHEN ${Math.min(mg.k, SLALOM.length)}/${SLALOM.length}`;
+  else if (mg.kind === 'goalie') big = `ANGRIFF ${Math.min(mg.n + 1, 20)}/20 · ${mg.score} PARADEN`;
+  if (big) { c.font = `900 italic ${small ? 20 : 26}px ${FONT}`; c.fillStyle = '#fff'; c.fillText(big, vw / 2, top + 15); }
+  if (mg.kind === 'penalty') {   // 10 Punkte für die Versuche
+    for (let i = 0; i < 10; i++) {
+      const x = vw / 2 + (i - 4.5) * 18, y = top + 26, r = mg.res[i];
+      c.beginPath(); c.arc(x, y, 6, 0, TAU);
+      if (r === true) { c.fillStyle = teamC(0); c.fill(); } else if (r === false) { c.strokeStyle = PINK; c.lineWidth = 2; c.stroke(); c.beginPath(); c.moveTo(x - 3, y - 3); c.lineTo(x + 3, y + 3); c.moveTo(x + 3, y - 3); c.lineTo(x - 3, y + 3); c.stroke(); }
+      else { c.strokeStyle = 'rgba(255,255,255,0.35)'; c.lineWidth = 1.5; c.stroke(); }
+    }
+  }
+  if (playTime < 6 && !banner) {
+    c.globalAlpha = clamp(6 - playTime, 0, 1) * 0.85; c.textBaseline = 'bottom'; c.font = `700 13px ${FONT}`; c.fillStyle = '#c4d8ee';
+    const hy = touchUI ? Math.min(btns[0].shoot.y - btns[0].shoot.r, btns[0].lob ? btns[0].lob.y - btns[0].lob.r : 1e9) - 10 : vh - 12 - safeBottom;
+    const lines = wrapLines(c, MINI_HELP[mg.kind][inputKind()], vw - 24);
+    lines.forEach((l, n) => c.fillText(l, vw / 2, hy - (lines.length - 1 - n) * 16));
+    c.globalAlpha = 1;
+  }
+}
+function renderMinis() {
+  $('miniList').innerHTML = Object.entries(MINIS).map(([k, M]) =>
+    `<button class="mini" data-k="${k}"><b>${esc(M.title)}</b><span>${esc(M.desc)}</span><small>${esc(miniRecText(k))}</small></button>`).join('');
 }
 
 // ================== Torhorn ==================
@@ -3123,6 +3406,7 @@ function step(dt) {
     return;
   }
   if (phase === 'play' && screen === 'game' && trainOn()) { playTime += dt; trainTick(dt); if (phase !== 'play' || screen !== 'game') return; }
+  else if (phase === 'play' && screen === 'game' && miniOn()) { playTime += dt; miniTick(dt); if (phase !== 'play' || screen !== 'game') return; }
   else if (phase === 'play' && screen === 'game' && !shootout) {
     timeLeft -= dt; playTime += dt;
     const sec = Math.ceil(timeLeft);
@@ -3149,7 +3433,7 @@ function step(dt) {
       return;
     }
   }
-  if (phase === 'play' && screen === 'game' && !shootout && !trainOn()) {   // Schlägerei: Herausforderung und Antwort
+  if (phase === 'play' && screen === 'game' && !shootout && !trainOn() && !miniOn()) {   // Schlägerei: Herausforderung und Antwort
     fightCD -= dt; fightInputs(); askTick(dt); aiChallenge(dt);
     if (phase === 'fight') return;
   } else if (screen === 'game') clearFightKeys();
@@ -3171,7 +3455,7 @@ function step(dt) {
   if (live) {
     if (aiDelay > 0) aiDelay -= dt;
     for (const s of skaters) {
-      if (!onIce(s) || isHuman(s) || (aiDelay > 0 && s.team === 1) || trainFreeze(s)) continue;
+      if (!onIce(s) || isHuman(s) || (aiDelay > 0 && s.team === 1) || trainFreeze(s) || miniFreeze(s)) continue;
       const v = aiThink(s, dt); s._ix = v.x; s._iy = v.y;
     }
   }
@@ -3181,7 +3465,7 @@ function step(dt) {
     for (let j = i + 1; j < skaters.length; j++) if (onIce(skaters[j])) skaterVsSkater(skaters[i], skaters[j]);
   }
   for (const gk of goalies) updateGoalie(gk, dt);
-  if (live && !shootout && !trainOn()) updateItem(dt);
+  if (live && !shootout && !trainOn() && !miniOn()) updateItem(dt);
   updatePuck(dt);
   if (live && puck.owner) tstat[puck.owner.team].poss += dt;
   if (screen === 'game' && !shootout && (live || phase === 'goal')) { recTick ^= 1; if (recTick) recFrame(); }
@@ -3419,8 +3703,11 @@ function drawFightTouch(c) {   // Touch: drei Zonen für die Fäuste
 
 function drawGoalie(c, gk) {
   const g = goals[gk.team], col = teamC(gk.team), dark = gk.team ? '#5a0d2b' : teamD(0);
-  const k = teamPw(1 - gk.team, 'mini') ? 0.62 : 1;
-  c.save(); c.translate(gk.x, gk.y); c.scale(k, k); gk.r = 21;   // Mini-Goalie: alles kleiner zeichnen
+  const r0 = gk.r, k = teamPw(1 - gk.team, 'mini') ? 0.62 : 1, dive = r0 > 24;   // Mini-Goalie: kleiner · Hechtsprung: gestreckt
+  if (gk.team === 0 && miniOn() && mg.kind === 'goalie') {   // Goalie-Modus: Ring zeigt, wen du steuerst
+    c.strokeStyle = hexToRgba(col, 0.6); c.lineWidth = 2.5; c.beginPath(); c.arc(gk.x, gk.y, r0 + 9, 0, TAU); c.stroke();
+  }
+  c.save(); c.translate(gk.x, gk.y); c.scale(k, k * (dive ? 1.4 : 1)); gk.r = 21;
   c.fillStyle = 'rgba(0,0,0,0.35)'; ellipse(c, 5, 7, gk.r * 0.8, gk.r * 1.1);
   c.rotate(g.dir > 0 ? Math.PI : 0);
   c.fillStyle = '#f2f6ff'; ellipse(c, 6, -gk.r * 0.62, 9, 8); ellipse(c, 6, gk.r * 0.62, 9, 8);   // Schoner
@@ -3438,7 +3725,7 @@ function drawGoalie(c, gk) {
     c.globalAlpha = 1 - k; c.fillStyle = '#d6b8ff'; c.font = `900 italic 15px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle';
     c.fillText('Zz', 0, 0); c.globalAlpha = 1; c.restore();
   }
-  gk.r = 21 * k;
+  gk.r = r0;
 }
 function drawItem(c) {
   if (!item) return;
@@ -3527,6 +3814,7 @@ function drawWorld(c) {
 
   drawItem(c);
   drawTrainWorld(c);
+  drawMiniWorld(c);
   for (const gk of goalies) drawGoalie(c, gk);
   drawPenBox(c);
   if (fight) drawFightStage(c);
@@ -3658,6 +3946,7 @@ function drawHUD(c, dt) {
   if (Math.abs(score - displayScore) < 0.5) displayScore = score;
   hudPop = Math.max(0, hudPop - dt * 3);
   if (trainOn() && screen !== 'menu') { drawTrainHUD(c); return; }
+  if (miniOn() && screen !== 'menu') { drawMiniHUD(c); return; }
   c.textBaseline = 'top'; c.textAlign = 'left';
   const pw0 = teams[0].find((s) => s.pw), pw1 = teams[1].find((s) => s.pw);
   if (solo()) {
@@ -3762,7 +4051,7 @@ function drawControls(c, i) {
     c.strokeStyle = s.charge >= 1 ? '#fff' : GOLD; c.lineWidth = 6;
     c.beginPath(); c.arc(sb.x, sb.y, sb.r + 7, -Math.PI / 2, -Math.PI / 2 + s.charge * TAU); c.stroke();
   }
-  c.fillStyle = '#fff'; c.font = `900 italic ${sb.r > 45 ? 15 : 13}px ${FONT}`; c.fillText('SCHUSS', sb.x, sb.y);
+  c.fillStyle = '#fff'; c.font = `900 italic ${sb.r > 45 ? 15 : 13}px ${FONT}`; c.fillText(miniOn() && mg.kind === 'goalie' ? 'HECHT' : 'SCHUSS', sb.x, sb.y);
   // Check- bzw. Pass-Knopf
   const passMode = puck.owner === s && hasMate(s);
   const ready = passMode || s.checkCD <= 0, cb = B.check;
@@ -3952,10 +4241,10 @@ function renderLeague(el) {
 
 // ================== Bildschirme ==================
 const $ = (id) => document.getElementById(id);
-const menuEl = $('menu'), pauseEl = $('pause'), overEl = $('over'), achEl = $('achPanel'), wardEl = $('wardPanel'), netEl = $('netPanel'), hudBtns = $('hudBtns');
+const menuEl = $('menu'), pauseEl = $('pause'), overEl = $('over'), achEl = $('achPanel'), wardEl = $('wardPanel'), netEl = $('netPanel'), miniEl = $('miniPanel'), hudBtns = $('hudBtns');
 let hsList = [], hsIdx = -1;
 function showOnly(el) {
-  for (const o of [menuEl, pauseEl, overEl, achEl, wardEl, netEl]) o.classList.toggle('hidden', o !== el);
+  for (const o of [menuEl, pauseEl, overEl, achEl, wardEl, netEl, miniEl]) o.classList.toggle('hidden', o !== el);
   $('btnPause').classList.toggle('hide', screen !== 'game');
 }
 // Vollbild (Taste F oder Knopf oben rechts)
@@ -4041,7 +4330,8 @@ let menuTab = 'ctl';
 function setTab(t) {
   menuTab = t;
   for (const b of $('menuTabs').children) b.classList.toggle('on', b.dataset.tab === t);
-  for (const id of ['ctl', 'tips', 'hs', 'tab']) $('pg-' + id).classList.toggle('hide', id !== t);
+  for (const id of ['ctl', 'tips', 'hs', 'tab', 'car']) $('pg-' + id).classList.toggle('hide', id !== t);
+  if (t === 'car') renderCareer();
 }
 function renderAch() {
   $('achSum').innerHTML = `<b>${achieved.length}</b> von ${ACH.length} freigeschaltet`;
@@ -4102,11 +4392,11 @@ function startGame(mode) {
   Snd.init();
   if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
   if (net.role === 'guest') return;
-  const opp = typeof mode === 'string' ? mode : (screen !== 'menu' && match.opp === 'train' ? 'train' : settings.opp);
+  const opp = typeof mode === 'string' ? mode : (screen !== 'menu' && (match.opp === 'train' || match.opp === 'mini') ? match.opp : settings.opp);
   const online = opp === 'online';
   if (online && !(net.connected && (net.lobby === 'host' || net.role === 'host'))) { openSub(netEl, renderNet); return; }
   Snd.stopMusic();
-  match.opp = opp; match.size = opp === 'train' ? 1 : settings.size;
+  match.opp = opp; match.size = opp === 'train' || opp === 'mini' ? 1 : settings.size;
   match.cup = opp === 'season' ? seasonOpp() - 1 : cupRound();
   if (online) { net.role = 'host'; net.names = [net.myName || 'S1', net.remoteName || 'S2']; }
   humanTeam[0] = true; humanTeam[1] = versus();
@@ -4121,6 +4411,7 @@ function startGame(mode) {
   cv.classList.toggle('aim', mouseOn());
   sfx.click();
   if (opp === 'train') { trainStart(); return; }
+  if (opp === 'mini') { miniStart(); return; }
   faceoff(versus() ? 0 : -1);   // erster Puck liegt näher bei dir: sofort losspielen
   introLen = 1.0; banner.dur = 1.0;
   if (match.opp === 'cup') toast('TURNIER · RUNDE ' + (match.cup + 1) + ' GEGEN DIE ' + CUP[match.cup].name.toUpperCase(), teamC(1));
@@ -4220,6 +4511,7 @@ function endGame() {
     $('ovTable').classList.toggle('hide', !showTable);
     score += bonus;
     checkChallenge(true); checkAch(true);
+    careerRecord(winner);
     const playPts = score - bonus - (challengeNow ? 500 : 0);
     showBanner('SCHLUSS!', goalsFor + ' : ' + goalsAgainst + soText, gs.won ? teamC(0) : PINK, '', 1.2);
     if (gs.won) burst(W / 2, CY, 80, [teamC(0), GOLD, '#fff'], 150, 700, 1.6, 5, 1, 2);
@@ -4673,6 +4965,9 @@ $('btnMenuP').addEventListener('click', toMenu);
 $('btnMenuO').addEventListener('click', toMenu);
 $('btnAch').addEventListener('click', () => openSub(achEl, renderAch));
 $('btnTrain').addEventListener('click', (e) => { e.currentTarget.blur(); startGame('train'); });
+$('btnMini').addEventListener('click', () => openSub(miniEl, renderMinis));
+$('btnMiniBack').addEventListener('click', closeSub);
+$('miniList').addEventListener('click', (e) => { const b = e.target.closest('.mini'); if (!b) return; match.mini = b.dataset.k; subPanel = null; startGame('mini'); });
 $('btnSkipP').addEventListener('click', () => { if (!trainOn()) return; togglePause(); trainNext(!(tr.done > 0)); });
 $('btnOrientP').addEventListener('click', () => { settings.orient = 'hoch'; saveSettings(); unlockOrient(); togglePause(); });
 $('btnWard').addEventListener('click', () => openSub(wardEl, renderWard));
@@ -4807,7 +5102,7 @@ window.__eis = {
   fightCD: (v) => { if (typeof v === 'number') fightCD = v; return fightCD; },
   net, host: () => netHost(), join: (c) => netJoin(c),
   tr: () => tr && { i: tr.i, id: TRAIN[tr.i].id, k: tr.k, done: +tr.done.toFixed(2), skips: tr.skips },
-  train: (i) => { if (tr) trainSetup(i); }, season: () => season, layout: () => btns, touch: (on) => { touchUI = !!on; resize(); refreshMenu(); },
+  train: (i) => { if (tr) trainSetup(i); }, season: () => season, mini: () => mg, career: () => career, miniRec: () => miniRec, layout: () => btns, touch: (on) => { touchUI = !!on; resize(); refreshMenu(); },
 };
 })();
 </script>

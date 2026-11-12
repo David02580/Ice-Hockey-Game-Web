@@ -235,6 +235,14 @@
   .mini b { font: 900 italic 16px var(--font); color: #fff; letter-spacing: 0.03em; }
   .mini small { color: var(--gold); font-weight: 800; font-size: 12px; }
   @media (max-width: 400px) { .minis { grid-template-columns: 1fr; } }
+  /* Tastenbelegung */
+  .keys { display: grid; gap: 6px; margin-top: 10px; }
+  .krow { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px;
+    border: 2px solid rgba(46, 230, 255, 0.2); background: rgba(46, 230, 255, 0.05); color: var(--text); font: 700 14px var(--font); cursor: pointer; text-align: left; }
+  .krow:hover { border-color: var(--cyan); }
+  .krow kbd { font-size: 13px; padding: 3px 9px; min-width: 34px; text-align: center; }
+  .krow.wait { border-color: var(--gold); background: rgba(255, 210, 63, 0.1); }
+  .krow.wait kbd { background: var(--gold); color: #041322; }
   .career { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .career div { background: rgba(46, 230, 255, 0.06); border: 1px solid rgba(46, 230, 255, 0.15); border-radius: 12px; padding: 8px 6px; text-align: center; }
   .career b { display: block; font: 900 italic 20px var(--font); color: #fff; }
@@ -299,6 +307,7 @@
           <div class="srow" id="rowLevel"><span class="lbl">Stufe</span><div class="seg" id="segLevel"><button data-v="0">Leicht</button><button data-v="1">Normal</button><button data-v="2">Profi</button></div></div>
           <div class="srow" id="rowCtl"><span class="lbl">Steuerung</span><div class="seg" id="segCtl"><button data-v="keys">Tastatur</button><button data-v="mouse">Maus</button></div></div>
           <div class="srow hide" id="rowOrient"><span class="lbl">Handy</span><div class="seg" id="segOrient"><button data-v="quer">Querformat</button><button data-v="hoch">Hochformat</button></div></div>
+          <div class="srow hide" id="rowBtns"><span class="lbl">Knöpfe</span><div class="seg" id="segBtns"><button data-v="s">Klein</button><button data-v="m">Mittel</button><button data-v="l">Gross</button></div></div>
         </div>
         <div class="cup hide" id="cupBar"></div>
         <p class="lead" id="lead"></p>
@@ -317,27 +326,29 @@
         <div class="tabs" id="menuTabs"><button data-tab="ctl" class="on">Steuerung</button><button data-tab="tips">Tipps</button><button data-tab="hs" id="tabHs">Bestenliste</button><button data-tab="tab" id="tabTab">Tabelle</button><button data-tab="car">Karriere</button></div>
         <div class="tabpage" id="pg-ctl">
           <div class="help" id="help1">
-            <div><b>TASTATUR</b><kbd>WASD</kbd> / Pfeile: fahren<br><kbd>Leertaste</kbd> antippen: Handgelenkschuss<br><kbd>Leertaste</kbd> halten: Schlagschuss<br><kbd>Shift</kbd>: Check · mit Puck: Pass<br><kbd>E</kbd>: Lupfer · <kbd>Q</kbd>: Spieler wechseln<br>2× Richtung tippen: Täuschen</div>
-            <div><b>TOUCH</b>Links ziehen: fahren<br>Joystick schnell zur Seite: Täuschen<br><b style="display:inline;color:var(--pink)">SCHUSS</b> halten, loslassen<br><b style="display:inline">CHECK</b> / <b style="display:inline">PASS</b>: rempeln oder passen<br><b style="display:inline">LUPF</b>: Puck hochheben<br><b style="display:inline">⇄ WECHSEL</b>: Spieler wechseln (2 gegen 2)</div>
+            <div id="helpKeys"></div>
+            <div><b>TOUCH</b>Links ziehen: fahren<br><b style="display:inline">» SPRINT</b>: kurz schneller<br>Joystick schnell in die Gegenrichtung: Täuschen<br><b style="display:inline;color:var(--pink)">SCHUSS</b> halten, loslassen<br><b style="display:inline">CHECK</b> / <b style="display:inline">PASS</b>: rempeln oder passen<br><b style="display:inline">LUPF</b>: Puck hochheben<br><b style="display:inline">⇄ WECHSEL</b>: Spieler wechseln (2 gegen 2)</div>
           </div>
           <div class="help hide" id="helpMouse">
             <div><b>MAUS</b>Zeiger: dorthin fährst und zielst du<br>Linke Taste halten: Schuss laden<br>Linke Taste ohne Puck (2 gegen 2): Spieler wechseln<br>Rechte Taste: Check · mit Puck: Pass<br>Mittlere Taste oder <kbd>E</kbd>: Lupfer</div>
-            <div><b>TASTATUR</b><kbd>W</kbd>: vorwärts zum Zeiger<br><kbd>S</kbd>: rückwärts<br><kbd>A</kbd> / <kbd>D</kbd>: seitwärts<br><kbd>Leertaste</kbd>: Täuschen<br><kbd>Q</kbd>: Spieler wechseln</div>
+            <div id="helpMouseKeys"></div>
           </div>
           <div class="help hide" id="help2">
-            <div><b>SPIELER 1</b><kbd>WASD</kbd> fahren<br><kbd>Leertaste</kbd> Schuss<br><kbd>Shift links</kbd> Check / Pass<br><kbd>E</kbd> Lupfer · <kbd>Q</kbd> Wechsel<br>Touch: linke Hälfte</div>
-            <div><b style="color:var(--pink)">SPIELER 2</b><kbd>Pfeile</kbd> fahren<br><kbd>Enter</kbd> Schuss<br><kbd>Shift rechts</kbd> Check / Pass<br><kbd>-</kbd> Lupfer · <kbd>.</kbd> Wechsel<br>Touch: rechte Hälfte</div>
+            <div id="helpP1"></div>
+            <div id="helpP2"></div>
           </div>
           <div class="help"><div class="wide2" id="helpFight"></div></div>
           <p class="tip" style="margin-top:10px"><kbd>P</kbd> Pause · <kbd>R</kbd> Neustart · <kbd>M</kbd> Ton · <kbd>F</kbd> Vollbild</p>
+          <div class="row" style="margin-top:4px"><button class="btn ghost small" id="btnKeys">⌨ Tasten ändern</button></div>
         </div>
         <div class="tabpage hide" id="pg-tips">
           <p class="tip"><b>Direktschuss:</b> Halte Schuss schon gedrückt, wenn der Puck zu dir kommt.</p>
           <p class="tip"><b>Rückhand:</b> Liegt das Tor links von dir, wird der Schuss zur Rückhand. Der Goalie reagiert später.</p>
           <p class="tip"><b>Bauerntrick:</b> Fahr hinter dem Tor durch und schliess am Pfosten ab.</p>
-          <p class="tip"><b>Pass fordern:</b> Ohne Puck fordert Shift (Maus: rechte Taste) beim Mitspieler einen Pass.</p>
+          <p class="tip"><b>Pass fordern:</b> Ohne Puck fordert die Check-Taste (Maus: rechte Taste) beim Mitspieler einen Pass.</p>
+          <p class="tip"><b>Sprint:</b> Gibt dir 1,5 Sekunden lang Tempo. Danach braucht er 3 Sekunden Pause; der weisse Bogen um deinen Spieler zeigt, wann er wieder bereit ist. Ideal für einen Konter.</p>
           <p class="tip"><b>Schlägerei:</b> Abwechselnd links und rechts schlagen gibt mehr Wucht. Weichst du im richtigen Moment aus, stolpert der Gegner und du kannst kontern. Wer viel schlägt, wird müde.</p>
-          <p class="tip"><b>Controller:</b> A Schuss · B Check/Pass · X Lupfer · Y Wechsel · LB/RB Täuschen · rechter Stick zielt. Schlägerei: View-Taste herausfordern, A annehmen, LB/RB Fäuste, B ausweichen.</p>
+          <p class="tip"><b>Controller:</b> A Schuss · B Check/Pass · X Lupfer · Y Wechsel · RT Sprint · LB/RB Täuschen · rechter Stick zielt. Schlägerei: View-Taste herausfordern, A annehmen, LB/RB Fäuste, B ausweichen.</p>
         </div>
         <div class="tabpage hide" id="pg-hs">
           <h2 id="hsTitle">Bestenliste</h2>
@@ -360,14 +371,14 @@
 <!-- Online-Raum -->
 <div id="netPanel" class="overlay hidden">
   <div class="panel">
-    <div class="kicker">ZWEI LAPTOPS · ÜBERS INTERNET</div>
+    <div class="kicker">ZWEI GERÄTE · ÜBERS INTERNET</div>
     <h1 style="font-size:clamp(38px,10vw,56px)">ONLINE</h1>
     <div class="row" style="margin-top:0;align-items:center">
       <span class="lead" style="margin:0 6px 0 0">Dein Kürzel</span>
       <input class="inp" id="netName" maxlength="3" autocomplete="off" spellcheck="false" aria-label="Dein Kürzel (3 Zeichen)">
     </div>
     <div id="netChoose">
-      <p class="lead" style="margin-top:8px">Einer eröffnet ein Spiel und sagt dem anderen den Code. Die Aufstellung (1 gegen 1 oder 2 gegen 2) bestimmt, wer eröffnet.</p>
+      <p class="lead" style="margin-top:8px">Einer eröffnet ein Spiel und schickt dem anderen den Link oder sagt ihm den Code. Die Aufstellung (1 gegen 1 oder 2 gegen 2) bestimmt, wer eröffnet.</p>
       <div class="row" style="margin-top:4px"><button class="btn" id="btnHost">Spiel eröffnen</button></div>
       <div class="row" style="align-items:center;margin-top:6px">
         <input class="inp" id="netCode" maxlength="4" autocomplete="off" spellcheck="false" placeholder="CODE" aria-label="Raumcode (4 Zeichen)">
@@ -377,13 +388,27 @@
     <div id="netHostBox" class="hide">
       <p class="lead" style="margin:10px 0 0">Dein Raumcode:</p>
       <div class="code" id="netCodeShow">----</div>
+      <div class="row" style="margin-top:2px;align-items:center"><button class="btn small" id="btnShare">Link teilen</button><span class="small" id="netLink" style="word-break:break-all;user-select:all"></span></div>
       <p class="lead" id="netSizeInfo"></p>
       <button class="btn hide" id="btnNetGo">Anpfiff!</button>
     </div>
     <div class="status" id="netStatus"></div>
-    <p class="tip" style="margin-top:4px"><b>Klappt es im Schul-WLAN nicht?</b> Viele Schulnetze sperren Direktverbindungen zwischen Laptops. Macht auf einem Handy einen Hotspot (das Handy wird zum WLAN) und verbindet beide Laptops damit. Dann läuft das Spiel direkt zwischen euch und braucht kaum mobile Daten.</p>
+    <p class="tip" style="margin-top:4px"><b>Klappt es nicht?</b> Geht keine Direktverbindung (Schul-WLAN, mobile Daten), läuft das Spiel über einen Umleitungsserver. Seid ihr im gleichen WLAN, geht es meistens direkt. Ein Spiel braucht etwa 1–2 MB Daten.</p>
     <div class="row"><button class="btn ghost small" id="btnNetBack">Zurück<span class="keyhint">ESC</span></button></div>
-    <p class="small">Zum Verbinden nutzt das Spiel den kostenlosen Dienst PeerJS (peerjs.com). Er sieht nur den Raumcode und die Netzwerkadressen der beiden Laptops. Danach laufen die Spieldaten direkt zwischen euch. Wer eröffnet, spielt Cyan und rechnet das Spiel; wer beitritt, spielt Pink und schiesst nach links.</p>
+    <p class="small">Zum Verbinden nutzt das Spiel den kostenlosen Dienst PeerJS (peerjs.com) und, wenn nötig, den Umleitungsserver von Metered (metered.ca). Sie sehen nur den Raumcode, die Netzwerkadressen und die Spieldaten, keine Namen. Wer eröffnet, spielt Cyan und rechnet das Spiel; wer beitritt, spielt Pink und schiesst nach links. Online: Tasten 1–4 senden ein Emoji.</p>
+  </div>
+</div>
+
+<!-- Tastenbelegung -->
+<div id="keysPanel" class="overlay hidden">
+  <div class="panel" style="width:min(460px,100%)">
+    <div class="kicker">STEUERUNG</div>
+    <h1 style="font-size:clamp(38px,10vw,56px)">TASTEN</h1>
+    <div class="seg" id="segKeys"><button data-v="solo">Allein / Online</button><button data-v="p1">Spieler 1</button><button data-v="p2">Spieler 2</button></div>
+    <p class="lead" id="keysInfo" style="margin:8px 0 0"></p>
+    <div class="keys" id="keysList"></div>
+    <div class="status" id="keysStatus"></div>
+    <div class="row"><button class="btn ghost small" id="btnKeysDef">Standard</button><button class="btn" id="btnKeysBack">Fertig<span class="keyhint">ESC</span></button></div>
   </div>
 </div>
 
@@ -668,7 +693,7 @@ const store = {
 };
 // Einstellungen: Gegner (cpu | local | online | cup), Aufstellung (1 oder 2), Stufe, Steuerung (keys | mouse)
 // Handy: orient = quer (Standard, Querformat festhalten) oder hoch (Hochformat erlaubt, Feld wird gedreht)
-const settings = { opp: 'cpu', size: 1, level: 1, ctl: 'keys', orient: 'quer' };
+const settings = { opp: 'cpu', size: 1, level: 1, ctl: 'keys', orient: 'quer', btns: 'm' };
 {
   const s = store.get('eisduell-einstellungen', {});
   if (s && typeof s === 'object') {
@@ -678,6 +703,7 @@ const settings = { opp: 'cpu', size: 1, level: 1, ctl: 'keys', orient: 'quer' };
     if (s.size === 2) settings.size = 2;
     if ([0, 1, 2].includes(s.level)) settings.level = s.level;
     if (s.ctl === 'mouse') settings.ctl = 'mouse';
+    if (['s', 'm', 'l'].includes(s.btns)) settings.btns = s.btns;
   }
 }
 const wardrobe = Object.assign({ jersey: 'cyan', rink: 'nacht', horn: 'sechselaeuten' }, store.get('eisduell-garderobe', {}));
@@ -1150,9 +1176,10 @@ sfx.penalty = () => { Snd.tone(2300, 0.1, 'sine', 0.14); Snd.tone(2300, 0.5, 'si
 sfx.ot = () => { [392, 523, 659, 784].forEach((f, i) => Snd.tone(f, 0.25, 'triangle', 0.12, 0, i * 0.1)); };
 sfx.back = () => { Snd.tone(1200, 0.08, 'sine', 0.06, 700); };
 sfx.switch = () => { Snd.tone(880, 0.05, 'sine', 0.07, 1250); };
+sfx.sprint = () => { Snd.hiss(0.18, 0.2, 1800, 'bandpass', 1.2, 0, 0.03); Snd.tone(420, 0.14, 'triangle', 0.07, 760); };
 
 // Touch-Knöpfe (bei 2 Spielern am selben Gerät hat jeder eine Bildschirmhälfte)
-const mkB = () => ({ shoot: { x: 0, y: 0, r: 50 }, check: { x: 0, y: 0, r: 36 }, lob: null, swap: null, joyX: 0, joyY: 0 });
+const mkB = () => ({ shoot: { x: 0, y: 0, r: 50 }, check: { x: 0, y: 0, r: 36 }, lob: null, swap: null, sprint: null, joyX: 0, joyY: 0 });
 const btns = [mkB(), mkB()];
 let rinkCv = null, marksCv = null, mctx = null;
 let T0 = JERSEYS[0], RK = RINKS[0];
@@ -1173,24 +1200,30 @@ function colDist(a, b) {
 }
 const isHex = (v) => typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v);
 
+const BTN_K = { s: 0.84, m: 1, l: 1.2 };   // Knopfgrösse klein / mittel / gross
 function layoutButtons() {
-  const by = vh - safeBottom - (portrait ? 92 : 78);
+  const k = BTN_K[settings.btns] || 1, by = vh - safeBottom - (portrait ? 92 : 78) * k;
+  const B = (x, y, r) => ({ x, y, r: r * k });
   if (match.opp === 'local') {
-    btns[0].shoot = { x: vw / 2 - 62, y: by, r: 40 }; btns[0].check = { x: vw / 2 - 146, y: by + 22, r: 30 }; btns[0].lob = null;
-    btns[1].shoot = { x: vw / 2 + 62, y: by, r: 40 }; btns[1].check = { x: vw / 2 + 146, y: by + 22, r: 30 }; btns[1].lob = null;
-    btns[0].joyX = 74; btns[1].joyX = vw - 74; btns[0].joyY = btns[1].joyY = by;
-    // Wechsel-Knopf (nur 2 gegen 2): zwischen Schuss und Check, etwas höher
-    btns[0].swap = match.size > 1 ? { x: vw / 2 - 106, y: by - 58, r: 23 } : null;
-    btns[1].swap = match.size > 1 ? { x: vw / 2 + 106, y: by - 58, r: 23 } : null;
+    const k2 = Math.min(k, 1.08);   // zu zweit ist wenig Platz
+    for (const [i, sg] of [[0, -1], [1, 1]]) {
+      const cx = vw / 2, bb = btns[i], yb = vh - safeBottom - 78 * k2;
+      bb.shoot = { x: cx + sg * 62 * k2, y: yb, r: 40 * k2 }; bb.check = { x: cx + sg * 146 * k2, y: yb + 22 * k2, r: 30 * k2 }; bb.lob = null;
+      bb.sprint = { x: cx + sg * 176 * k2, y: yb - 50 * k2, r: 24 * k2 };
+      // Wechsel-Knopf (nur 2 gegen 2): zwischen Schuss und Check, etwas höher
+      bb.swap = match.size > 1 ? { x: cx + sg * 106 * k2, y: yb - 58 * k2, r: 23 * k2 } : null;
+      bb.joyX = i ? vw - 74 : 74; bb.joyY = yb;
+    }
   } else {
-    btns[0].shoot = { x: vw - 76, y: by, r: 50 }; btns[0].check = { x: vw - 184, y: by + 26, r: 36 };
-    btns[0].lob = { x: vw - 150, y: by - 70, r: 27 };
-    btns[0].swap = match.size > 1 ? { x: vw - 58, y: by - 98, r: 27 } : null;
+    btns[0].shoot = B(vw - 76 * k, by, 50); btns[0].check = B(vw - 184 * k, by + 26 * k, 36);
+    btns[0].lob = B(vw - 150 * k, by - 70 * k, 27);
+    btns[0].swap = match.size > 1 ? B(vw - 58 * k, by - 98 * k, 27) : null;
+    btns[0].sprint = portrait ? B(vw - 218 * k, by - 44 * k, 28) : B(vw - 250 * k, by - 40 * k, 28);
     btns[0].joyX = 86; btns[0].joyY = by;
   }
 }
 function resize() {
-  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  dpr = Math.min(window.devicePixelRatio || 1, touchUI ? 1.5 : 2);   // Handy: etwas tiefere Auflösung, läuft flüssiger
   vw = window.innerWidth; vh = window.innerHeight;
   cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);
   safeTop = document.getElementById('safe').getBoundingClientRect().height;
@@ -1501,7 +1534,7 @@ function makeSkater(team, idx) {
     team, idx, x: 0, y: 0, vx: 0, vy: 0, r: 20, face: team ? Math.PI : 0, sx: 0, sy: 0, out: false, pen: 0, foul: 0,
     charging: false, charge: 0, chargeGoal: 0, aimY: CY, checkCD: 0, dash: 0, hitDone: false, stun: 0,
     pickCD: 0, stealT: 0, poke: 0, brake: 0, follow: 0, mx: null, my: null,
-    dodge: 0, protect: 0, dodgeCD: 0, oneTimer: 0, pw: null, pwT: 0, atx: 0, aty: 0,
+    dodge: 0, protect: 0, dodgeCD: 0, oneTimer: 0, pw: null, pwT: 0, atx: 0, aty: 0, spr: 0, sprCD: 0,
     aimA: null, behindT: 9, passCD: 0, wantPass: 0, role: 1, back: false, _ix: 0, _iy: 0,
   };
 }
@@ -1769,6 +1802,16 @@ function doCheck(s, ang) {
   sfx.whoosh();
   burst(s.x, s.y, 8, iceCols(), 60, 200, 0.35, 3, 0, 4, ang + Math.PI, 0.6);
 }
+// Sprint: kurzer Stoss (1,5 s ca. 25 % schneller), danach Pause, bis er wieder bereit ist
+const SPRINT_T = 1.5, SPRINT_CD = 4.5;
+function doSprint(s) {
+  if (s.sprCD > 0 || s.stun > 0 || frozenBy(s)) return false;
+  s.spr = SPRINT_T; s.sprCD = SPRINT_CD;
+  sfx.sprint();
+  const a = Math.atan2(s.vy, s.vx) || s.face;
+  burst(s.x, s.y, 7, iceCols(), 60, 200, 0.3, 2.6, 0, 4, a + Math.PI, 0.6);
+  return true;
+}
 function doDodge(s, dx, dy) {
   const l = Math.hypot(dx, dy); if (!l) return;
   dx /= l; dy /= l;
@@ -1869,6 +1912,8 @@ function aiThink(s, dt) {
         doDodge(s, qx, qy);
       }
     }
+    // Sprint: freie Bahn Richtung Tor
+    if (s.sprCD <= 0 && !s.charging && dO > 130 && Math.hypot(gx - s.x, CY - s.y) > 330 && Math.random() < K.spd * 1.2 * dt) doSprint(s);
     // Passen (2 gegen 2)
     if (mate && !s.charging && s.passCD <= 0 && phase === 'play' && !shootout) {
       const lane = laneFree(puck.x, puck.y, mate.x, mate.y, s.team);
@@ -1918,6 +1963,7 @@ function aiThink(s, dt) {
         // Freier Puck: hinfahren und vorausschauen
         const lead = clamp(Math.hypot(puck.x - s.x, puck.y - s.y) / 400, 0, 0.5);
         tx = puck.x + puck.vx * lead; ty = puck.y + puck.vy * lead;
+        if (s.sprCD <= 0 && Math.hypot(puck.x - s.x, puck.y - s.y) > 280 && Math.random() < K.spd * 0.8 * dt) doSprint(s);   // weit weg: zum Puck sprinten
       }
     } else {
       // Freier Puck, ein Mitspieler ist näher dran: Position halten
@@ -1934,16 +1980,18 @@ function aiThink(s, dt) {
 
 // ================== Bewegung ==================
 function moveSkater(s, ix, iy, dt) {
-  if (frozenBy(s)) { s.vx = s.vy = 0; s.dash = s.dodge = 0; }   // Eiszeit: steht ganz still
+  if (frozenBy(s)) { s.vx = s.vy = 0; s.dash = s.dodge = 0; s.spr = 0; }   // Eiszeit: steht ganz still
+  if (s.spr > 0) s.spr -= dt;
+  if (s.sprCD > 0) s.sprCD -= dt;
   if (s.stun > 0) { s.stun -= dt; ix = iy = 0; }
   if (s.pwT > 0) { s.pwT -= dt; if (s.pwT <= 0) { s.pw = null; s.pwT = 0; } }
   if (s.dash > 0) s.dash -= dt;
   else if (s.dodge > 0) s.dodge -= dt;
   else {
-    const turbo = s.pw === 'turbo' ? 1.28 : 1;
-    const maxV = (s.charging ? 215 : (puck.owner === s ? 315 : 340)) * turbo * (RK.slow ? 0.92 : 1);   // Freiluft: stumpferes Eis
+    const turbo = s.pw === 'turbo' ? 1.28 : 1, sprint = s.spr > 0 ? 1.25 : 1;
+    const maxV = (s.charging ? 215 : (puck.owner === s ? 315 : 340)) * turbo * sprint * (RK.slow ? 0.92 : 1);   // Freiluft: stumpferes Eis
     const has = ix !== 0 || iy !== 0;
-    const k = has ? 7 * turbo : 1.4;               // ohne Eingabe gleitet man aus
+    const k = has ? 7 * turbo * (sprint > 1 ? 1.4 : 1) : 1.4;   // ohne Eingabe gleitet man aus
     const sp = Math.hypot(s.vx, s.vy);
     if (has && sp > 180) {
       const dot = (s.vx * ix + s.vy * iy) / (sp * Math.hypot(ix, iy));
@@ -2339,7 +2387,7 @@ function resetSkaters() {
   for (const s of skaters) {
     s.vx = s.vy = 0; s.stun = s.dash = s.poke = s.brake = s.follow = s.dodge = s.protect = s.oneTimer = 0;
     s.charging = false; s.charge = 0; s.pickCD = 0; s.stealT = 0; s.checkCD = 0; s.dodgeCD = 0; s.mx = null; s.out = false;
-    s.aimA = null; s.behindT = 9; s.passCD = 0; s.wantPass = 0; s.back = false;
+    s.aimA = null; s.behindT = 9; s.passCD = 0; s.wantPass = 0; s.back = false; s.spr = 0; s.sprCD = 0;
   }
 }
 function faceoff(lean) {
@@ -2435,19 +2483,19 @@ const TRAIN = [
   { id: 'fahren', title: 'FAHREN', goal: 'Fahr durch die drei leuchtenden Kreise.', puck: 'loose', opp: 0,
     how: { touch: 'Links auf dem Bildschirm ziehen: Das ist dein Joystick.', keys: 'Fahren mit WASD oder den Pfeiltasten.', mouse: 'Zeig mit der Maus auf den Kreis und halte W gedrückt.' } },
   { id: 'schuss', title: 'SCHIESSEN', goal: 'Hol dir den Puck und schiess ein Tor.', puck: 'loose', opp: 0,
-    how: { touch: 'Fahr über den Puck, dann SCHUSS kurz antippen.', keys: 'Fahr über den Puck, dann Leertaste kurz antippen.', mouse: 'Fahr über den Puck, zeig aufs Tor und klick links.' } },
+    how: { touch: 'Fahr über den Puck, dann SCHUSS kurz antippen.', keys: 'Fahr über den Puck, dann {shoot} kurz antippen.', mouse: 'Fahr über den Puck, zeig aufs Tor und klick links.' } },
   { id: 'hammer', title: 'SCHLAGSCHUSS', goal: 'Lade einen Schuss ganz auf, dann schiess.', puck: 'own', opp: 0,
-    how: { touch: 'SCHUSS gedrückt halten, bis der Ring voll ist. Dann loslassen.', keys: 'Leertaste halten, bis der Ring voll ist. Dann loslassen.', mouse: 'Linke Taste halten, bis der Ring voll ist. Dann loslassen.' } },
+    how: { touch: 'SCHUSS gedrückt halten, bis der Ring voll ist. Dann loslassen.', keys: '{shoot} halten, bis der Ring voll ist. Dann loslassen.', mouse: 'Linke Taste halten, bis der Ring voll ist. Dann loslassen.' } },
   { id: 'lupfer', title: 'LUPFER', goal: 'Heb den Puck in die Luft – er fliegt über die Stöcke.', puck: 'own', opp: 0,
-    how: { touch: 'Mit dem Puck LUPF antippen.', keys: 'Mit dem Puck E drücken.', mouse: 'Mit dem Puck E oder die mittlere Maustaste drücken.' } },
+    how: { touch: 'Mit dem Puck LUPF antippen.', keys: 'Mit dem Puck {lob} drücken.', mouse: 'Mit dem Puck {lob} oder die mittlere Maustaste drücken.' } },
   { id: 'taeuschen', title: 'TÄUSCHEN', goal: 'Ein Verteidiger steht im Weg. Weich ihm mit dem Puck aus!', puck: 'own', opp: 'wall',
-    how: { touch: 'Joystick schnell zur Seite reissen.', keys: 'Zweimal schnell dieselbe Richtung tippen, z.B. W W.', mouse: 'Leertaste drücken.' } },
+    how: { touch: 'Joystick schnell zur Seite reissen.', keys: 'Zweimal schnell dieselbe Richtung tippen, z.B. W W.{dodgeAlt}', mouse: '{mdodge} drücken.' } },
   { id: 'check', title: 'CHECK', goal: 'Der Gegner hat den Puck. Hol ihn dir zurück!', puck: 'opp', opp: 'play',
-    how: { touch: 'Fahr hin und tipp CHECK, wenn du nah dran bist.', keys: 'Fahr hin und drück Shift, wenn du nah dran bist.', mouse: 'Fahr hin und drück die rechte Maustaste, wenn du nah dran bist.' } },
+    how: { touch: 'Fahr hin und tipp CHECK, wenn du nah dran bist.', keys: 'Fahr hin und drück {check}, wenn du nah dran bist.', mouse: 'Fahr hin und drück die rechte Maustaste, wenn du nah dran bist.' } },
   { id: 'pass', title: 'PASS', goal: 'Jetzt hast du einen Mitspieler. Spiel ihm den Puck zu.', puck: 'own', opp: 0, size: 2,
-    how: { touch: 'Mit dem Puck PASS antippen.', keys: 'Mit dem Puck Shift drücken.', mouse: 'Zeig auf den Mitspieler und drück die rechte Maustaste.' } },
+    how: { touch: 'Mit dem Puck PASS antippen.', keys: 'Mit dem Puck {check} drücken.', mouse: 'Zeig auf den Mitspieler und drück die rechte Maustaste.' } },
   { id: 'wechsel', title: 'WECHSEL', goal: 'Steuere jetzt deinen anderen Spieler.', puck: 'loose', opp: 0, size: 2,
-    how: { touch: '⇄ WECHSEL antippen.', keys: 'Q drücken.', mouse: 'Ohne Puck links klicken (oder Q).' } },
+    how: { touch: '⇄ WECHSEL antippen.', keys: '{sw} drücken.', mouse: 'Ohne Puck links klicken (oder {sw}).' } },
   { id: 'spiel', title: 'ABSCHLUSS', goal: 'Schiess zu zweit ein Tor gegen zwei Gegner.', puck: 'loose', opp: 'play', size: 2,
     how: { touch: 'Alles ist erlaubt. Ein Pass zur richtigen Zeit hilft!', keys: 'Alles ist erlaubt. Ein Pass zur richtigen Zeit hilft!', mouse: 'Alles ist erlaubt. Ein Pass zur richtigen Zeit hilft!' } },
 ];
@@ -2616,7 +2664,7 @@ function drawTrainHUD(c) {   // Aufgabe oben in der Mitte
   c.font = `800 ${small ? 14 : 16}px ${FONT}`; c.fillStyle = '#fff';
   for (const l of wrapLines(c, L.goal, maxW)) { c.fillText(l, vw / 2, y); y += small ? 17 : 20; }
   c.font = `600 ${small ? 12 : 13}px ${FONT}`; c.fillStyle = '#c4d8ee';
-  for (const l of wrapLines(c, L.how[inputKind()], maxW)) { c.fillText(l, vw / 2, y); y += small ? 15 : 17; }
+  for (const l of wrapLines(c, fillKeys(L.how[inputKind()]), maxW)) { c.fillText(l, vw / 2, y); y += small ? 15 : 17; }
 }
 
 // ================== Karriere-Statistik ==================
@@ -2668,10 +2716,10 @@ const MINIS = {
   goalie: { title: 'GOALIE', desc: 'Du stehst im Tor: Halte möglichst viele von 20 Angriffen. Hechtsprung mit SCHUSS.', unit: 'Paraden', low: false, pts: 40 },
 };
 const MINI_HELP = {
-  ziel: { touch: 'Links fahren · SCHUSS: auf die Scheibe zielen', keys: 'WASD fahren · Leertaste: Schuss · Fahrtrichtung = Schussrichtung', mouse: 'Maus zielt · Linksklick: Schuss' },
+  ziel: { touch: 'Links fahren · SCHUSS: auf die Scheibe zielen', keys: 'WASD fahren · {shoot}: Schuss · Fahrtrichtung = Schussrichtung', mouse: 'Maus zielt · Linksklick: Schuss' },
   slalom: { touch: 'Grüner Pfeil zeigt die Seite. Puck nicht verlieren!', keys: 'Grüner Pfeil zeigt die Seite. Puck nicht verlieren!', mouse: 'Grüner Pfeil zeigt die Seite. Puck nicht verlieren!' },
-  penalty: { touch: 'Fahr auf den Goalie zu, täusch ihn und schiess', keys: 'Fahr auf den Goalie zu, täusch ihn (2× Richtung) und schiess', mouse: 'Fahr auf den Goalie zu, täusch ihn (Leertaste) und schiess' },
-  goalie: { touch: 'Joystick hoch/runter: Goalie bewegen · SCHUSS: Hechtsprung', keys: 'W/S oder ↑/↓: Goalie bewegen · Leertaste: Hechtsprung', mouse: 'Maus hoch/runter: Goalie bewegen · Linksklick: Hechtsprung' },
+  penalty: { touch: 'Fahr auf den Goalie zu, täusch ihn und schiess', keys: 'Fahr auf den Goalie zu, täusch ihn (2× Richtung) und schiess', mouse: 'Fahr auf den Goalie zu, täusch ihn ({mdodge}) und schiess' },
+  goalie: { touch: 'Joystick hoch/runter: Goalie bewegen · SCHUSS: Hechtsprung', keys: 'W/S oder ↑/↓: Goalie bewegen · {shoot}: Hechtsprung', mouse: 'Maus hoch/runter: Goalie bewegen · Linksklick: Hechtsprung' },
 };
 const SLALOM = [300, 430, 560, 690, 820, 950].map((x, i) => ({ x, y: CY, up: i % 2 === 0 }));   // up: oben vorbei
 const TARGETS = [CY - 54, CY - 22, CY + 22, CY + 54];
@@ -2871,7 +2919,7 @@ function drawMiniHUD(c) {   // Anzeige oben in der Mitte
   if (playTime < 6 && !banner) {
     c.globalAlpha = clamp(6 - playTime, 0, 1) * 0.85; c.textBaseline = 'bottom'; c.font = `700 13px ${FONT}`; c.fillStyle = '#c4d8ee';
     const hy = touchUI ? Math.min(btns[0].shoot.y - btns[0].shoot.r, btns[0].lob ? btns[0].lob.y - btns[0].lob.r : 1e9) - 10 : vh - 12 - safeBottom;
-    const lines = wrapLines(c, MINI_HELP[mg.kind][inputKind()], vw - 24);
+    const lines = wrapLines(c, fillKeys(MINI_HELP[mg.kind][inputKind()]), vw - 24);
     lines.forEach((l, n) => c.fillText(l, vw / 2, hy - (lines.length - 1 - n) * 16));
     c.globalAlpha = 1;
   }
@@ -2949,7 +2997,7 @@ function startFight(a, b) {
   const l = a.x <= b.x ? a : b, r = l === a ? b : a;
   l.x = mx - 33; r.x = mx + 33; l.y = r.y = my; l.face = 0; r.face = Math.PI;
   for (const s of skaters) {
-    s.charging = false; s.charge = 0; s.vx = s.vy = 0; s.dash = s.dodge = s.stun = 0; s.mx = null;
+    s.charging = false; s.charge = 0; s.vx = s.vy = 0; s.dash = s.dodge = s.stun = 0; s.spr = 0; s.mx = null;
     if (s === a || s === b || !onIce(s)) continue;
     const dx = s.x - mx, dy = s.y - my, d = Math.hypot(dx, dy);
     if (d < 130) { s.x = mx + (d ? (dx / d) * 130 : 0); s.y = my + (d ? (dy / d) * 130 : 130); collideRink(s, s.r, 0); }
@@ -3045,7 +3093,7 @@ function finishFight() {
   const F = fight; fight = null; fightCD = FIGHT_CD;
   phase = 'goal'; goalTimer = 1.7; replay = null; nextLean = 0;
   clearFightKeys();
-  for (const C of ctl) { C.checkQueued = C.lobQueued = C.switchQueued = C.shootReleased = false; C.dodgeQueued = null; }
+  for (const C of ctl) { C.checkQueued = C.lobQueued = C.switchQueued = C.sprintQueued = C.shootReleased = false; C.dodgeQueued = null; }
   const w = F.w; if (!w) return;
   const l = w === F.a ? F.b : F.a;
   tstat[w.team].fights++;
@@ -3096,7 +3144,7 @@ function checkChallenge(final) {
 const keys = {};
 function makeCtl() {
   return { keyShoot: false, touchShoot: false, mouseShoot: false, padShoot: false, netShoot: false, shootReleased: false,
-    checkQueued: false, lobQueued: false, switchQueued: false, dodgeQueued: null, padAim: null, netAim: null,
+    checkQueued: false, lobQueued: false, switchQueued: false, sprintQueued: false, dodgeQueued: null, padAim: null, netAim: null,
     padMove: { x: 0, y: 0 }, netMove: { x: 0, y: 0 },
     joy: { id: null, bx: 0, by: 0, x: 0, y: 0, R: 52, hist: [] }, shootPtr: null, checkPtr: null, lobPtr: null, lastTap: { code: '', t: 0 },
     fChal: false, fAcc: false, fL: false, fR: false, fD: false, lastF: 0, lastChk: 0 };
@@ -3106,20 +3154,99 @@ let KM = [];
 const mouseOn = () => settings.ctl === 'mouse' && match.opp !== 'local' && match.opp !== 'demo';
 const myTeam = () => (net.role === 'guest' ? 1 : 0);
 const teamOfCtl = (i) => (net.role === 'guest' ? 1 : i);
+// ================== Tastenbelegung (frei wählbar, nur Fahren ist fix) ==================
+// solo = allein (auch online), p1 / p2 = zu zweit an einem Gerät
+const ACTIONS = [
+  { k: 'shoot', name: 'Schuss' }, { k: 'check', name: 'Check / Pass' }, { k: 'lob', name: 'Lupfer' },
+  { k: 'sw', name: 'Spieler wechseln' }, { k: 'sprint', name: 'Sprint' }, { k: 'dodge', name: 'Täuschen' },
+];
+const BIND_DEF = {
+  solo: { shoot: 'Space', check: 'ShiftLeft', lob: 'KeyE', sw: 'KeyQ', sprint: 'Enter', dodge: '' },
+  p1: { shoot: 'Space', check: 'ShiftLeft', lob: 'KeyE', sw: 'KeyQ', sprint: 'KeyC', dodge: '' },
+  p2: { shoot: 'Enter', check: 'ShiftRight', lob: 'Slash', sw: 'Period', sprint: 'Comma', dodge: '' },
+};
+// Zusatztasten, die auch gehen, solange sie nicht anders belegt sind
+const BIND_EXTRA = {
+  solo: { shoot: ['KeyJ'], check: ['ShiftRight', 'KeyK'], lob: ['KeyL'], sw: ['KeyI'], sprint: ['NumpadEnter'], dodge: [] },
+  p1: { shoot: [], check: [], lob: [], sw: [], sprint: [], dodge: [] },
+  p2: { shoot: ['NumpadEnter', 'Numpad0'], check: ['Numpad1'], lob: ['NumpadSubtract', 'Numpad2'], sw: ['Numpad3'], sprint: ['Numpad4'], dodge: [] },
+};
+const MOVE_KEYS = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+const RESERVED = ['Escape', 'KeyP', 'KeyM', 'KeyR', 'KeyF', 'Tab', 'CapsLock', 'ControlLeft', 'ControlRight', 'AltLeft', 'AltRight', 'AltGraph',
+  'MetaLeft', 'MetaRight', 'OSLeft', 'OSRight', 'ContextMenu', 'Backspace', 'Delete'];
+const keyAllowed = (code) => typeof code === 'string' && /^[A-Za-z0-9]{1,24}$/.test(code) && !MOVE_KEYS.includes(code) && !RESERVED.includes(code) && !/^F\d+$/.test(code);
+const binds = { solo: {}, p1: {}, p2: {}, lbl: {} };
+function loadBinds() {
+  const b = store.get('eisduell-tasten', {}) || {};
+  for (const set of ['solo', 'p1', 'p2']) {
+    const src = b[set] && typeof b[set] === 'object' ? b[set] : {};
+    for (const a of ACTIONS) {
+      const v = src[a.k];
+      binds[set][a.k] = (v === '' && a.k === 'dodge') ? '' : (keyAllowed(v) ? v : BIND_DEF[set][a.k]);
+    }
+  }
+  // doppelt belegte Tasten (z.B. beschädigte Daten) zurück auf Standard
+  for (const group of [['solo'], ['p1', 'p2']]) {
+    const seen = {};
+    for (const set of group) for (const a of ACTIONS) {
+      const v = binds[set][a.k]; if (!v) continue;
+      if (seen[v]) { for (const g of group) binds[g] = Object.assign({}, BIND_DEF[g]); break; }
+      seen[v] = 1;
+    }
+  }
+  binds.lbl = {};
+  if (b.lbl && typeof b.lbl === 'object') for (const k in b.lbl) if (keyAllowed(k) && typeof b.lbl[k] === 'string') binds.lbl[k] = b.lbl[k].slice(0, 14);
+}
+loadBinds();
+function saveBinds() { store.set('eisduell-tasten', { solo: binds.solo, p1: binds.p1, p2: binds.p2, lbl: binds.lbl }); }
+const KEY_NAMES = { Space: 'Leertaste', Enter: 'Enter', NumpadEnter: 'Enter (Zahlenblock)', ShiftLeft: 'Shift links', ShiftRight: 'Shift rechts',
+  Comma: ',', Period: '.', Slash: '-', Minus: "'", Equal: '^', BracketLeft: 'ü', BracketRight: '¨', Semicolon: 'ö', Quote: 'ä', Backslash: '$',
+  Backquote: '§', IntlBackslash: '<', NumpadAdd: '+ (Zahlenblock)', NumpadSubtract: '- (Zahlenblock)', NumpadMultiply: '* (Zahlenblock)',
+  NumpadDivide: '/ (Zahlenblock)', NumpadDecimal: '. (Zahlenblock)', Insert: 'Einfg', Home: 'Pos1', End: 'Ende', PageUp: 'Bild ↑', PageDown: 'Bild ↓' };
+function keyName(code) {
+  if (!code) return '–';
+  if (binds.lbl[code]) return binds.lbl[code];
+  if (KEY_NAMES[code]) return KEY_NAMES[code];
+  let m = /^Key([A-Z])$/.exec(code); if (m) return m[1];
+  m = /^Digit(\d)$/.exec(code); if (m) return m[1];
+  m = /^Numpad(\d)$/.exec(code); if (m) return 'Zahlenblock ' + m[1];
+  return code;
+}
+const kbd = (code) => '<kbd>' + esc(keyName(code)) + '</kbd>';
+// Tasten für eine Aktion: die gewählte plus freie Zusatztasten
+function bindKeys(set, a, group) {
+  const used = [];
+  for (const g of group) for (const x of ACTIONS) if (binds[g][x.k]) used.push(binds[g][x.k]);
+  const own = binds[set][a] ? [binds[set][a]] : [];
+  return own.concat(BIND_EXTRA[set][a].filter((k) => !used.includes(k)));
+}
 function keyMap() {
   // Schlägerei: fchal = 2× tippen zum Herausfordern, facc = annehmen, fl/fr = Fäuste, fd = ausweichen
-  if (match.opp === 'local') return [
-    { up: ['KeyW'], down: ['KeyS'], left: ['KeyA'], right: ['KeyD'], shoot: ['Space'], check: ['ShiftLeft'], lob: ['KeyE'], sw: ['KeyQ'], dodge: [],
-      fchal: ['Space'], facc: ['Space'], fl: ['KeyA'], fr: ['KeyD'], fd: ['KeyS'] },
-    { up: ['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'], shoot: ['Enter', 'NumpadEnter', 'Numpad0'],
-      check: ['ShiftRight', 'Numpad1'], lob: ['Slash', 'NumpadSubtract', 'Numpad2'], sw: ['Period', 'Numpad3'], dodge: [],
-      fchal: ['Enter', 'NumpadEnter'], facc: ['Enter', 'NumpadEnter'], fl: ['ArrowLeft'], fr: ['ArrowRight'], fd: ['ArrowDown'] },
-  ];
-  const base = { up: ['KeyW', 'ArrowUp'], down: ['KeyS', 'ArrowDown'], left: ['KeyA', 'ArrowLeft'], right: ['KeyD', 'ArrowRight'],
-    check: ['ShiftLeft', 'ShiftRight', 'KeyK'], lob: ['KeyE', 'KeyL'], sw: ['KeyQ', 'KeyI'],
-    fchal: ['Space'], facc: ['Enter', 'NumpadEnter'], fl: ['ArrowLeft', 'KeyA'], fr: ['ArrowRight', 'KeyD'], fd: ['ArrowDown', 'KeyS'] };
-  if (mouseOn()) return [Object.assign(base, { shoot: ['KeyJ'], dodge: ['Space'] })];
-  return [Object.assign(base, { shoot: ['Space', 'KeyJ'], dodge: [] })];
+  const mk = (set, group) => { const o = {}; for (const a of ACTIONS) o[a.k] = bindKeys(set, a.k, group); return o; };
+  if (match.opp === 'local') {
+    const a = mk('p1', ['p1', 'p2']), b = mk('p2', ['p1', 'p2']);
+    return [
+      Object.assign(a, { up: ['KeyW'], down: ['KeyS'], left: ['KeyA'], right: ['KeyD'], fchal: a.shoot, facc: a.shoot, fl: ['KeyA'], fr: ['KeyD'], fd: ['KeyS'] }),
+      Object.assign(b, { up: ['ArrowUp'], down: ['ArrowDown'], left: ['ArrowLeft'], right: ['ArrowRight'], fchal: b.shoot, facc: b.shoot, fl: ['ArrowLeft'], fr: ['ArrowRight'], fd: ['ArrowDown'] }),
+    ];
+  }
+  const m = mk('solo', ['solo']);
+  Object.assign(m, { up: ['KeyW', 'ArrowUp'], down: ['KeyS', 'ArrowDown'], left: ['KeyA', 'ArrowLeft'], right: ['KeyD', 'ArrowRight'],
+    fchal: m.shoot.slice(), facc: ['Enter', 'NumpadEnter'], fl: ['ArrowLeft', 'KeyA'], fr: ['ArrowRight', 'KeyD'], fd: ['ArrowDown', 'KeyS'] });
+  if (mouseOn() && m.shoot.includes('Space')) {   // mit Maus schiesst die linke Taste; die Leertaste wird dann zum Täuschen
+    m.shoot = m.shoot.filter((k) => k !== 'Space');
+    if (!m.dodge.length) m.dodge = ['Space'];
+  }
+  return [m];
+}
+// Tastennamen in Hilfetexten: {shoot} {check} {lob} {sw} {sprint} {mdodge} {dodgeAlt}
+function fillKeys(t) {
+  const B = binds.solo;
+  return String(t).replace(/\{(shoot|check|lob|sw|sprint|mdodge|dodgeAlt)\}/g, (_, k) => {
+    if (k === 'mdodge') return keyName(B.dodge || (B.shoot === 'Space' ? 'Space' : ''));
+    if (k === 'dodgeAlt') return B.dodge ? ' Oder ' + keyName(B.dodge) + ' drücken.' : '';
+    return keyName(B[k]);
+  });
 }
 const anyKey = (list) => list.some((k) => keys[k]);
 function toWorld(x, y) { return portrait ? { x: -y, y: x } : { x, y }; }   // Hochformat: Bildschirmrichtung → Feldrichtung
@@ -3149,7 +3276,7 @@ function resetInputs() {
   for (const k in keys) keys[k] = false;
   for (const C of ctl) {
     C.keyShoot = C.touchShoot = C.mouseShoot = C.padShoot = C.netShoot = C.shootReleased = false;
-    C.checkQueued = C.lobQueued = C.switchQueued = false; C.dodgeQueued = null; C.netAim = null;
+    C.checkQueued = C.lobQueued = C.switchQueued = C.sprintQueued = false; C.dodgeQueued = null; C.netAim = null;
     C.netMove.x = C.netMove.y = 0;
     C.joy.id = null; C.joy.x = C.joy.y = 0; C.joy.hist.length = 0; C.shootPtr = C.checkPtr = C.lobPtr = null;
   }
@@ -3197,6 +3324,7 @@ function aimFor(i, s) {
 function skipReplayLocal() { if (net.role === 'guest') net.cnt.sk++; else replaySkip(); }
 
 addEventListener('keydown', (e) => {
+  if (keyCapture) { captureKey(e); return; }   // Tastenbelegung: wartet auf die neue Taste
   const tag = document.activeElement && document.activeElement.tagName;
   if (tag === 'INPUT') { if (e.key === 'Enter') document.activeElement.blur(); return; }
   if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault();
@@ -3218,12 +3346,16 @@ addEventListener('keydown', (e) => {
   if (e.code === 'KeyR') { if (!net.role) startGame(); return; }
   if (screen === 'paused') { if (e.code === 'Enter') togglePause(); return; }
   if (phase === 'replay') { skipReplayLocal(); return; }
+  const bound = KM.some((m) => ACTIONS.some((a) => m[a.k].includes(e.code)));
+  if (net.role && /^Digit[1-4]$/.test(e.code) && !bound) { sendEmoji(+e.code[5] - 1); return; }   // Online: Emoji senden
+  if (bound) e.preventDefault();   // z.B. «-» öffnet in Firefox sonst die Schnellsuche
   KM.forEach((m, i) => {
     const C = ctl[i];
     if (m.shoot.includes(e.code)) setShoot(i, 'keyShoot', true);
     if (m.check.includes(e.code)) C.checkQueued = true;
     if (m.lob.includes(e.code)) C.lobQueued = true;
     if (m.sw.includes(e.code)) C.switchQueued = true;
+    if (m.sprint.includes(e.code)) C.sprintQueued = true;
     if (m.dodge.includes(e.code)) { const v = readInput(i); C.dodgeQueued = (v.x || v.y) ? { x: v.x, y: v.y } : facingDir(i); }
     // Schlägerei
     if (m.fchal.includes(e.code)) { const now = performance.now(); if (now - C.lastF < 330) { C.fChal = true; C.lastF = 0; } else C.lastF = now; }
@@ -3252,6 +3384,7 @@ cv.addEventListener('mousedown', (e) => {
   if (screen !== 'game') return;
   mouse.x = e.clientX; mouse.y = e.clientY;
   if (phase === 'replay') { skipReplayLocal(); return; }
+  if (e.button === 0 && emojiHit(e.clientX, e.clientY)) return;
   if (!mouseOn()) return;
   mouse.has = true; e.preventDefault();
   const C = ctl[0];
@@ -3275,6 +3408,7 @@ cv.addEventListener('pointerdown', (e) => {
   if (screen !== 'game') return;
   if (phase === 'replay') { skipReplayLocal(); return; }
   const x = e.clientX, y = e.clientY;
+  if (emojiHit(x, y)) return;
   try { cv.setPointerCapture(e.pointerId); } catch (err) {}
   const p = match.opp === 'local' ? (x < vw / 2 ? 0 : 1) : 0, B = btns[p], C = ctl[p];
   if (phase === 'fight') {   // Schlägerei: links / rechts tippen = Fäuste, Mitte = ausweichen
@@ -3292,6 +3426,7 @@ cv.addEventListener('pointerdown', (e) => {
     C.lastChk = now; C.checkPtr = e.pointerId; C.checkQueued = true; return;
   }
   if (B.lob && Math.hypot(x - B.lob.x, y - B.lob.y) < B.lob.r + 12) { C.lobPtr = e.pointerId; C.lobQueued = true; return; }
+  if (B.sprint && Math.hypot(x - B.sprint.x, y - B.sprint.y) < B.sprint.r + 10) { C.sprintQueued = true; C.sprFlash = 0.25; return; }
   const shootZone = match.opp === 'local' ? (p === 0 ? x > vw * 0.3 : x < vw * 0.7) : x > vw * 0.5;
   if (shootZone) { C.shootPtr = e.pointerId; setShoot(p, 'touchShoot', true); return; }
   const j = C.joy;
@@ -3306,15 +3441,15 @@ cv.addEventListener('pointermove', (e) => {
     const l = Math.hypot(dx, dy);
     if (l > j.R) { j.bx += dx * (1 - j.R / l); j.by += dy * (1 - j.R / l); dx = e.clientX - j.bx; dy = e.clientY - j.by; }
     const n = Math.hypot(dx, dy) / j.R;
-    if (n < 0.15) { j.x = j.y = 0; }
-    else { const m = Math.min(1, (n - 0.15) / 0.7) / (n || 1); j.x = (dx / j.R) * m; j.y = (dy / j.R) * m; }
-    // Täuschen: Joystick schnell in eine neue Richtung reissen
+    if (n < 0.1) { j.x = j.y = 0; }
+    else { const m = Math.min(1, (n - 0.1) / 0.55) / (n || 1); j.x = (dx / j.R) * m; j.y = (dy / j.R) * m; }
+    // Täuschen: Joystick schnell fast ganz in die Gegenrichtung reissen (normales Kurvenfahren löst es nicht aus)
     const now = performance.now(), mag = Math.hypot(j.x, j.y);
     j.hist.push({ t: now, x: j.x, y: j.y });
-    while (j.hist.length && now - j.hist[0].t > 160) j.hist.shift();
-    if (mag > 0.85 && j.hist.length > 2) {
+    while (j.hist.length && now - j.hist[0].t > 140) j.hist.shift();
+    if (mag > 0.9 && j.hist.length > 2) {
       const o = j.hist[0], om = Math.hypot(o.x, o.y);
-      if (om > 0.5 && now - o.t > 40 && Math.abs(angDiff(Math.atan2(o.y, o.x), Math.atan2(j.y, j.x))) > 1.2) {
+      if (om > 0.8 && now - o.t > 30 && Math.abs(angDiff(Math.atan2(o.y, o.x), Math.atan2(j.y, j.x))) > 2.3) {
         C.dodgeQueued = toWorld(j.x, j.y); j.hist.length = 0;
       }
     }
@@ -3361,6 +3496,7 @@ function pollPads() {
       if (edge(1)) C.checkQueued = true;
       if (edge(2)) C.lobQueued = true;
       if (edge(3)) C.switchQueued = true;
+      if (edge(7) || edge(6) || edge(10)) C.sprintQueued = true;   // RT, LT oder linken Stick drücken: Sprint
       if (edge(4) || edge(5)) C.dodgeQueued = (x || y) ? toWorld(x, y) : facingDir(ci);
       if (edge(8)) C.fChal = true;                     // Schlägerei: View-Taste fordert heraus, A nimmt an
       if (edge(0)) C.fAcc = true;
@@ -3379,7 +3515,7 @@ function rumble(strength, ms) {
 
 // ================== Ablauf eines Rechenschritts ==================
 function humanActions(s, C, dt) {
-  if (!onIce(s)) { C.shootReleased = C.checkQueued = C.lobQueued = false; C.dodgeQueued = null; if (C.switchQueued) { C.switchQueued = false; manualSwitch(s.team); } return; }
+  if (!onIce(s)) { C.shootReleased = C.checkQueued = C.lobQueued = C.sprintQueued = false; C.dodgeQueued = null; if (C.switchQueued) { C.switchQueued = false; manualSwitch(s.team); } return; }
   if (shootDown(C) && puck.owner === s) {
     s.charging = true; s.charge = Math.min(1, s.charge + dt / 0.75);
     s.back = shotInfo(s).back;
@@ -3410,6 +3546,7 @@ function humanActions(s, C, dt) {
     const d = C.dodgeQueued; C.dodgeQueued = null;
     if (phase === 'play' && s.dodgeCD <= 0 && s.stun <= 0) doDodge(s, d.x, d.y);
   }
+  if (C.sprintQueued) { C.sprintQueued = false; if (phase === 'play') doSprint(s); }
 }
 function step(dt) {
   phaseT += dt; simTime += dt;
@@ -3511,6 +3648,7 @@ function skaterFx(s, dt) {
     if (screen === 'game') sfx.scrape();
   }
   if (s.dash > 0 || s.dodge > 0) spawn(s.x + rand(-10, 10), s.y + rand(-10, 10), -s.vx * 0.2, -s.vy * 0.2, 0.25, 3, teamC(s.team), 0, 4);
+  if (s.spr > 0 && sp > 120 && Math.random() < 0.7) spawn(s.x + rand(-6, 6), s.y + rand(-6, 6), -s.vx * 0.3, -s.vy * 0.3, 0.28, 2.4, '#ffffff', 3, 4);
   if (s.pw === 'turbo' && sp > 120 && Math.random() < 0.6) spawn(s.x + rand(-6, 6), s.y + rand(-6, 6), -s.vx * 0.3, -s.vy * 0.3, 0.3, 2.5, GOLD, 3, 4);
 }
 function updateParts(dt) {
@@ -3541,7 +3679,13 @@ function drawSkater(c, s, human) {
   if (s.out) return;
   const col = teamC(s.team), dark = teamD(s.team), r = s.r;
   c.save(); c.translate(s.x, s.y);
-  if (human) { c.strokeStyle = hexToRgba(col, match.size > 1 ? 0.8 : 0.45); c.lineWidth = match.size > 1 ? 3 : 2; c.beginPath(); c.arc(0, 0, r + 7, 0, TAU); c.stroke(); }
+  if (human) {
+    c.strokeStyle = hexToRgba(col, match.size > 1 ? 0.8 : 0.45); c.lineWidth = match.size > 1 ? 3 : 2; c.beginPath(); c.arc(0, 0, r + 7, 0, TAU); c.stroke();
+    if (s.sprCD > 0) {   // Sprint lädt sich wieder auf: weisser Bogen wächst
+      c.strokeStyle = s.spr > 0 ? '#ffffff' : 'rgba(255,255,255,0.55)'; c.lineWidth = 2.5;
+      c.beginPath(); c.arc(0, 0, r + 12, -Math.PI / 2, -Math.PI / 2 + (s.spr > 0 ? s.spr / SPRINT_T : 1 - s.sprCD / SPRINT_CD) * TAU); c.stroke();
+    }
+  }
   if (s.protect > 0) { c.strokeStyle = hexToRgba('#ffffff', 0.6 * Math.min(1, s.protect * 3)); c.lineWidth = 2; c.setLineDash([4, 5]); c.beginPath(); c.arc(0, 0, r + 11, 0, TAU); c.stroke(); c.setLineDash([]); }
   c.fillStyle = 'rgba(0,0,0,0.35)'; ellipse(c, 5, 7, r * 1.05, r * 0.9);
   if (s.dash > 0 || s.dodge > 0) {   // Nachbilder beim Rempeln und Täuschen
@@ -3919,7 +4063,7 @@ function drawBanner(c, dt) {
   c.globalAlpha = k > 0.75 ? 1 - (k - 0.75) / 0.25 : 1;
   c.textAlign = 'center'; c.textBaseline = 'middle';
   c.font = `900 italic ${Math.round(size)}px ${FONT}`;
-  c.shadowColor = b.color; c.shadowBlur = 28;
+  c.shadowColor = b.color; c.shadowBlur = touchUI ? 0 : 28;
   c.fillStyle = '#ffffff'; c.fillText(b.text, ox, oy - size * 0.12);
   c.shadowBlur = 0;
   c.lineWidth = Math.max(2, size * 0.03); c.strokeStyle = b.color; c.strokeText(b.text, ox, oy - size * 0.12);
@@ -4028,22 +4172,17 @@ function drawHUD(c, dt) {
     c.fillText('STRAFE ' + who + ' · 0:' + String(Math.ceil(s.pen)).padStart(2, '0'), vw / 2, below);
     below += 15;
   }
-  // Ping im Online-Spiel
-  if (net.role && net.ping) {
-    c.textAlign = 'right'; c.textBaseline = 'bottom'; c.font = `700 11px ${FONT}`; c.fillStyle = net.ping > 150 ? PINK : '#8aa6c8';
-    c.fillText('PING ' + Math.round(net.ping) + ' ms', vw - 12, vh - 8 - safeBottom);
-  }
   // Steuerungshinweis in den ersten Sekunden
   if (playTime < 7 && screen === 'game' && !banner && !toasts.length && !fight && !fightAsk) {
     c.globalAlpha = clamp(7 - playTime, 0, 1) * 0.85;
     c.textAlign = 'center'; c.textBaseline = 'bottom'; c.font = `700 13px ${FONT}`; c.fillStyle = '#c4d8ee';
     let msg;
-    if (match.opp === 'local') msg = touchUI ? 'Jeder spielt auf seiner Bildschirmhälfte' : 'S1: WASD · Leertaste · Shift links   |   S2: Pfeile · Enter · Shift rechts';
-    else if (touchUI) msg = 'Links ziehen: fahren · SCHUSS halten und loslassen' + (match.size > 1 ? ' · ⇄ wechselt den Spieler' : '');
-    else if (mouseOn()) msg = 'W: zum Mauszeiger fahren · S: rückwärts · A/D: seitwärts · Linke Taste: Schuss' + (match.size > 1 ? ' (ohne Puck: Wechsel)' : '') + ' · Rechte Taste: Check/Pass';
-    else msg = 'WASD/Pfeile: fahren · Leertaste: Schuss · Shift: ' + (match.size > 1 ? 'Check/Pass' : 'Check') + ' · E: Lupfer';
+    if (match.opp === 'local') msg = touchUI ? 'Jeder spielt auf seiner Bildschirmhälfte' : `S1: WASD · ${keyName(binds.p1.shoot)} · ${keyName(binds.p1.check)} · Sprint ${keyName(binds.p1.sprint)}   |   S2: Pfeile · ${keyName(binds.p2.shoot)} · ${keyName(binds.p2.check)} · Sprint ${keyName(binds.p2.sprint)}`;
+    else if (touchUI) msg = 'Links ziehen: fahren · SCHUSS halten und loslassen · SPRINT: kurz schneller' + (match.size > 1 ? ' · ⇄ wechselt den Spieler' : '');
+    else if (mouseOn()) msg = 'W: zum Mauszeiger fahren · S: rückwärts · A/D: seitwärts · Linke Taste: Schuss' + (match.size > 1 ? ' (ohne Puck: Wechsel)' : '') + ' · Rechte Taste: Check/Pass · ' + keyName(binds.solo.sprint) + ': Sprint';
+    else msg = fillKeys('WASD/Pfeile: fahren · {shoot}: Schuss · {check}: ' + (match.size > 1 ? 'Check/Pass' : 'Check') + ' · {lob}: Lupfer · {sprint}: Sprint');
     if (net.role === 'guest') msg = 'Du spielst Pink und schiesst nach links · ' + msg;
-    const hy = Math.min(btns[0].shoot.y - btns[0].shoot.r, btns[0].lob ? btns[0].lob.y - btns[0].lob.r : 1e9) - 10;
+    const hy = Math.min(btns[0].shoot.y - btns[0].shoot.r, btns[0].lob ? btns[0].lob.y - btns[0].lob.r : 1e9, btns[0].sprint ? btns[0].sprint.y - btns[0].sprint.r - 6 : 1e9) - 10;
     const lines = wrapLines(c, msg, vw - 24);   // auf schmalen Bildschirmen umbrechen
     lines.forEach((l, n) => c.fillText(l, vw / 2, (touchUI ? hy : vh - 12 - safeBottom) - (lines.length - 1 - n) * 16));
     c.globalAlpha = 1;
@@ -4087,6 +4226,20 @@ function drawControls(c, i) {
     c.fillStyle = hexToRgba(col, on ? 0.16 : 0.05); c.strokeStyle = hexToRgba(col, on ? 0.9 : 0.3); c.lineWidth = 2;
     c.beginPath(); c.arc(lb.x, lb.y, lb.r, 0, TAU); c.fill(); c.stroke();
     c.fillStyle = on ? '#fff' : 'rgba(255,255,255,0.45)'; c.font = `900 italic 11px ${FONT}`; c.fillText('LUPF', lb.x, lb.y);
+  }
+  // Sprint-Knopf: Bogen zeigt, wie lange es noch dauert, bis er wieder bereit ist
+  if (B.sprint) {
+    const pb = B.sprint, rdy = s.sprCD <= 0, hit = (C.sprFlash || 0) > 0;
+    C.sprFlash = Math.max(0, (C.sprFlash || 0) - 1 / 60);
+    c.fillStyle = hexToRgba(col, hit || s.spr > 0 ? 0.4 : (rdy ? 0.16 : 0.05)); c.strokeStyle = hexToRgba(col, rdy ? 0.95 : 0.3); c.lineWidth = 2;
+    c.beginPath(); c.arc(pb.x, pb.y, pb.r * (hit ? 0.92 : 1), 0, TAU); c.fill(); c.stroke();
+    if (!rdy) {
+      c.strokeStyle = s.spr > 0 ? '#fff' : col; c.lineWidth = 4;
+      c.beginPath(); c.arc(pb.x, pb.y, pb.r + 5, -Math.PI / 2, -Math.PI / 2 + (s.spr > 0 ? s.spr / SPRINT_T : 1 - s.sprCD / SPRINT_CD) * TAU); c.stroke();
+    }
+    c.fillStyle = rdy ? '#fff' : 'rgba(255,255,255,0.45)';
+    c.font = `900 ${pb.r > 25 ? 15 : 13}px ${FONT}`; c.fillText('»', pb.x, pb.y - 6);
+    c.font = `900 italic ${pb.r > 25 ? 9.5 : 8.5}px ${FONT}`; c.fillText('SPRINT', pb.x, pb.y + 8);
   }
   // Wechsel-Knopf (2 gegen 2): hell, wenn ein Wechsel gerade möglich ist (du hast den Puck nicht)
   if (B.swap && !shootout) {
@@ -4151,6 +4304,7 @@ function render(dt) {
   if (screen !== 'menu' && !rep) drawHUD(c, dt);
   if (screen === 'game' && !rep) drawFightHUD(c);
   drawToasts(c, dt);
+  if (!rep) drawOnline(c, dt);
   drawTouch(c);
   drawCrosshair(c);
   if (flash > 0) { c.globalAlpha = flash; c.fillStyle = flashColor; c.fillRect(0, 0, vw, vh); c.globalAlpha = 1; }
@@ -4260,10 +4414,10 @@ function renderLeague(el) {
 
 // ================== Bildschirme ==================
 const $ = (id) => document.getElementById(id);
-const menuEl = $('menu'), pauseEl = $('pause'), overEl = $('over'), achEl = $('achPanel'), wardEl = $('wardPanel'), netEl = $('netPanel'), miniEl = $('miniPanel'), hudBtns = $('hudBtns');
+const menuEl = $('menu'), pauseEl = $('pause'), overEl = $('over'), achEl = $('achPanel'), wardEl = $('wardPanel'), netEl = $('netPanel'), miniEl = $('miniPanel'), keysEl = $('keysPanel'), hudBtns = $('hudBtns');
 let hsList = [], hsIdx = -1;
 function showOnly(el) {
-  for (const o of [menuEl, pauseEl, overEl, achEl, wardEl, netEl, miniEl]) o.classList.toggle('hidden', o !== el);
+  for (const o of [menuEl, pauseEl, overEl, achEl, wardEl, netEl, miniEl, keysEl]) o.classList.toggle('hidden', o !== el);
   $('btnPause').classList.toggle('hide', screen !== 'game');
 }
 // Vollbild (Taste F oder Knopf oben rechts)
@@ -4295,7 +4449,7 @@ function unlockOrient() { try { const o = window.screen.orientation; if (o && o.
 if (document.fullscreenEnabled || document.webkitFullscreenEnabled) $('btnFull').classList.remove('hide');
 document.addEventListener('fullscreenchange', updFull);
 document.addEventListener('webkitfullscreenchange', updFull);
-function saveSettings() { store.set('eisduell-einstellungen', { opp: settings.opp, size: settings.size, level: settings.level, ctl: settings.ctl, orient: settings.orient }); }
+function saveSettings() { store.set('eisduell-einstellungen', { opp: settings.opp, size: settings.size, level: settings.level, ctl: settings.ctl, orient: settings.orient, btns: settings.btns }); }
 function menuNote(txt) { const el = $('menuNote'); el.textContent = txt || ''; el.classList.toggle('hide', !txt); }
 const cleanName = (v) => String(v || '').toUpperCase().replace(/[^A-Z0-9ÄÖÜ]/g, '').slice(0, 3);
 const myName = (fallback) => cleanName(store.raw(NAME_KEY, '')) || fallback;
@@ -4308,6 +4462,9 @@ function refreshMenu() {
   for (const b of $('segCtl').children) b.classList.toggle('on', b.dataset.v === settings.ctl);
   for (const b of $('segOrient').children) b.classList.toggle('on', b.dataset.v === settings.orient);
   $('rowOrient').classList.toggle('hide', !touchUI);
+  $('rowBtns').classList.toggle('hide', !touchUI);
+  for (const b of $('segBtns').children) b.classList.toggle('on', b.dataset.v === settings.btns);
+  renderKeyHelp();
   $('btnTrain').classList.toggle('hl', !trainDone);
   $('rowLevel').classList.toggle('hide', o !== 'cpu');
   $('rowCtl').classList.toggle('hide', o === 'local' || (touchUI && !matchMedia('(pointer: fine)').matches));
@@ -4316,16 +4473,16 @@ function refreshMenu() {
   $('helpMouse').classList.toggle('hide', !mouseHelp);
   $('help2').classList.toggle('hide', o !== 'local');
   $('helpFight').innerHTML = o === 'local'
-    ? '<b>SCHLÄGEREI</b>Nah beim Gegner, ohne Puck: eigene Schusstaste 2× tippen (S1 <kbd>Leertaste</kbd>, S2 <kbd>Enter</kbd>). Annehmen: eigene Schusstaste.<br>S1: <kbd>A</kbd> / <kbd>D</kbd> Fäuste, <kbd>S</kbd> ausweichen · S2: <kbd>←</kbd> / <kbd>→</kbd> Fäuste, <kbd>↓</kbd> ausweichen. Der Verlierer muss auf die Strafbank.'
-    : '<b>SCHLÄGEREI</b>Nah beim Gegner, ohne Puck: <kbd>Leertaste</kbd> 2× tippen (Touch: CHECK 2×). Annehmen: <kbd>Enter</kbd>.<br><kbd>←</kbd> / <kbd>→</kbd> (oder <kbd>A</kbd> / <kbd>D</kbd>): linke / rechte Faust · <kbd>↓</kbd> (oder <kbd>S</kbd>): ausweichen' + (mouseHelp ? ' · Maustasten gehen auch' : '') + '. Der Verlierer muss auf die Strafbank.';
+    ? '<b>SCHLÄGEREI</b>Nah beim Gegner, ohne Puck: eigene Schusstaste 2× tippen (S1 ' + kbd(binds.p1.shoot) + ', S2 ' + kbd(binds.p2.shoot) + '). Annehmen: eigene Schusstaste.<br>S1: <kbd>A</kbd> / <kbd>D</kbd> Fäuste, <kbd>S</kbd> ausweichen · S2: <kbd>←</kbd> / <kbd>→</kbd> Fäuste, <kbd>↓</kbd> ausweichen. Der Verlierer muss auf die Strafbank.'
+    : '<b>SCHLÄGEREI</b>Nah beim Gegner, ohne Puck: ' + kbd(mouseHelp && binds.solo.shoot === 'Space' ? 'KeyJ' : binds.solo.shoot) + ' 2× tippen (Touch: CHECK 2×). Annehmen: <kbd>Enter</kbd>.<br><kbd>←</kbd> / <kbd>→</kbd> (oder <kbd>A</kbd> / <kbd>D</kbd>): linke / rechte Faust · <kbd>↓</kbd> (oder <kbd>S</kbd>): ausweichen' + (mouseHelp ? ' · Maustasten gehen auch' : '') + '. Der Verlierer muss auf die Strafbank.';
   $('tabHs').classList.toggle('hide', o !== 'cpu');
   $('tabTab').classList.toggle('hide', o !== 'season');
   if ((menuTab === 'hs' && o !== 'cpu') || (menuTab === 'tab' && o !== 'season')) setTab('ctl');
   const two = settings.size === 2, r = cupRound();
   const leads = {
-    cpu: '90 Sekunden gegen den Computer. Schiess so viele Tore wie möglich – Tore in Serie zählen mehrfach.' + (two ? ' Du hast einen Computer-Mitspieler: Shift passt ihm den Puck.' : ''),
+    cpu: '90 Sekunden gegen den Computer. Schiess so viele Tore wie möglich – Tore in Serie zählen mehrfach.' + (two ? ' Du hast einen Computer-Mitspieler: ' + keyName(binds.solo.check) + ' passt ihm den Puck.' : ''),
     local: '2 Spieler an einem Gerät: 90 Sekunden, wer mehr Tore schiesst, gewinnt.' + (two ? ' Jeder hat einen Computer-Mitspieler.' : '') + ' Bei Gleichstand: Verlängerung, dann Penaltys.',
-    online: 'Zwei Laptops übers Internet: Einer eröffnet ein Spiel, der andere tritt mit dem Raumcode bei.' + (two ? ' Jeder hat einen Computer-Mitspieler.' : ''),
+    online: 'Zwei Geräte übers Internet: Einer eröffnet ein Spiel, der andere tritt mit dem Link oder Raumcode bei.' + (two ? ' Jeder hat einen Computer-Mitspieler.' : ''),
     cup: `Turnier: ${CUP.length} Gegner, jeder stärker als der letzte. Runde ${r + 1}/${CUP.length} gegen die ${CUP[r].name}. Verlierst du, darfst du die Runde wiederholen.`,
     season: `Saison ${season.n}: ${S_ROUNDS} Spieltage gegen die ${CUP.length} Teams, jedes zweimal. Spieltag ${season.round + 1} gegen die ${CUP[seasonOpp() - 1].name}. Du bist auf Platz ${seasonOrder().indexOf(0) + 1}. Dein Stand bleibt gespeichert.`,
   };
@@ -4344,6 +4501,58 @@ function refreshMenu() {
   $('hsTitle').textContent = 'Bestenliste · ' + LV().name;
   renderHS($('hsMenu'), loadHS());
 }
+// Hilfetexte zur Tastatur (passen sich der eigenen Belegung an)
+function renderKeyHelp() {
+  const B = binds.solo, mouseDodge = B.dodge || (B.shoot === 'Space' ? 'Space' : '');
+  $('helpKeys').innerHTML = '<b>TASTATUR</b><kbd>WASD</kbd> / Pfeile: fahren<br>' + kbd(B.shoot) + ' antippen: Handgelenkschuss<br>' + kbd(B.shoot) + ' halten: Schlagschuss<br>' +
+    kbd(B.check) + ': Check · mit Puck: Pass<br>' + kbd(B.lob) + ': Lupfer · ' + kbd(B.sw) + ': Wechsel<br>' + kbd(B.sprint) + ': Sprint<br>2× Richtung tippen' + (B.dodge ? ' oder ' + kbd(B.dodge) : '') + ': Täuschen';
+  $('helpMouseKeys').innerHTML = '<b>TASTATUR</b><kbd>W</kbd>: vorwärts zum Zeiger<br><kbd>S</kbd>: rückwärts<br><kbd>A</kbd> / <kbd>D</kbd>: seitwärts<br>' +
+    (mouseDodge ? kbd(mouseDodge) + ': Täuschen<br>' : '') + kbd(B.sprint) + ': Sprint · ' + kbd(B.sw) + ': Wechsel';
+  const pl = (P, head, mv, side) => head + mv + ' fahren<br>' + kbd(P.shoot) + ' Schuss<br>' + kbd(P.check) + ' Check / Pass<br>' + kbd(P.lob) + ' Lupfer · ' + kbd(P.sw) + ' Wechsel<br>' + kbd(P.sprint) + ' Sprint' + (P.dodge ? ' · ' + kbd(P.dodge) + ' Täuschen' : '') + '<br>Touch: ' + side + ' Hälfte';
+  $('helpP1').innerHTML = pl(binds.p1, '<b>SPIELER 1</b>', '<kbd>WASD</kbd>', 'linke');
+  $('helpP2').innerHTML = pl(binds.p2, '<b style="color:var(--pink)">SPIELER 2</b>', '<kbd>Pfeile</kbd>', 'rechte');
+}
+// Fenster «Tasten»: Aktion anklicken, dann neue Taste drücken
+let keySet = 'solo', keyCapture = null;
+function renderKeys() {
+  for (const b of $('segKeys').children) b.classList.toggle('on', b.dataset.v === keySet);
+  $('keysInfo').textContent = (keySet === 'solo' ? 'Gilt, wenn du allein spielst (auch online). ' : 'Gilt für «Zu zweit» an einem Gerät. ') +
+    'Klick auf eine Aktion und drück dann die neue Taste. Fahren (' + (keySet === 'p2' ? 'Pfeile' : 'WASD' + (keySet === 'solo' ? ' / Pfeile' : '')) + ') bleibt fix.';
+  $('keysList').innerHTML = ACTIONS.map((a) => {
+    const wait = keyCapture && keyCapture.a === a.k;
+    const v = binds[keySet][a.k];
+    const show = wait ? 'Taste drücken …' : (v ? keyName(v) : (a.k === 'dodge' ? '2× Richtung' : '–'));
+    return `<button class="krow${wait ? ' wait' : ''}" data-a="${a.k}"><span>${esc(a.name)}</span><kbd>${esc(show)}</kbd></button>`;
+  }).join('');
+}
+function keyStatus(t, kind = '') { const el = $('keysStatus'); el.textContent = t; el.className = 'status ' + kind; }
+function captureKey(e) {
+  e.preventDefault(); e.stopPropagation();
+  const cap = keyCapture, code = e.code;
+  if (code === 'Escape') { keyCapture = null; keyStatus(''); renderKeys(); return; }
+  if ((code === 'Backspace' || code === 'Delete') && cap.a === 'dodge') {   // Täuschen nur per 2× Richtung
+    binds[cap.set].dodge = ''; keyCapture = null; saveBinds(); keyStatus('Täuschen geht jetzt nur mit 2× Richtung tippen.', 'ok'); renderKeys(); return;
+  }
+  if (MOVE_KEYS.includes(code)) { keyStatus('WASD und die Pfeile sind fürs Fahren reserviert. Nimm eine andere Taste.', 'err'); return; }
+  if (!keyAllowed(code)) { keyStatus('Diese Taste geht nicht (sie hat schon eine feste Aufgabe, z.B. P = Pause, M = Ton, R = Neustart, F = Vollbild).', 'err'); return; }
+  const group = cap.set === 'solo' ? ['solo'] : ['p1', 'p2'];
+  const old = binds[cap.set][cap.a];
+  let other = null;
+  for (const g of group) for (const a of ACTIONS) if (!(g === cap.set && a.k === cap.a) && binds[g][a.k] === code) other = { set: g, a: a.k };
+  if (other && !old && other.a !== 'dodge') { keyStatus('Diese Taste braucht schon «' + ACTIONS.find((x) => x.k === other.a).name + '». Gib der zuerst eine andere Taste.', 'err'); return; }
+  binds[cap.set][cap.a] = code;
+  let msg = keyName(code) + ' = ' + ACTIONS.find((x) => x.k === cap.a).name + '.';
+  if (other) {   // Taste war schon belegt: die beiden tauschen
+    binds[other.set][other.a] = old;
+    msg += ' «' + ACTIONS.find((x) => x.k === other.a).name + '»' + (other.set !== cap.set ? ' (' + (other.set === 'p1' ? 'Spieler 1' : 'Spieler 2') + ')' : '') + ' hat jetzt ' + (old ? keyName(old) : 'keine Taste') + '.';
+  }
+  const lb = e.key && e.key.length === 1 ? (e.key === ' ' ? 'Leertaste' : e.key.toUpperCase()) : '';
+  if (lb && !KEY_NAMES[code]) binds.lbl[code] = lb;   // Name so, wie er auf deiner Tastatur steht (z.B. Z/Y auf Schweizer Tastatur)
+  keyCapture = null; saveBinds(); sfx.click();
+  keyStatus(msg, 'ok'); renderKeys();
+}
+function openKeys() { keyCapture = null; keySet = settings.opp === 'local' ? 'p1' : 'solo'; keyStatus(''); openSub(keysEl, renderKeys); }
+
 // Reiter rechts im Startbildschirm
 let menuTab = 'ctl';
 function setTab(t) {
@@ -4392,7 +4601,7 @@ function renderNet() {
   if (!net.peer) netStatus('');
 }
 function openSub(el, render) { subPanel = el; render(); showOnly(el); sfx.click(); }
-function closeSub() { if (subPanel === netEl && !net.role) netClose(); if (subPanel === wardEl) Snd.stopMusic(); subPanel = null; refreshMenu(); showOnly(menuEl); }
+function closeSub() { keyCapture = null; if (subPanel === netEl && !net.role) netClose(); if (subPanel === wardEl) Snd.stopMusic(); subPanel = null; refreshMenu(); showOnly(menuEl); }
 function menuStart() { if (settings.opp === 'online') openSub(netEl, renderNet); else startGame(); }
 
 function resetMatchState() {
@@ -4619,22 +4828,33 @@ function toggleMute() {
 // Der Gastgeber rechnet das Spiel und schickt etwa 30-mal pro Sekunde den Stand.
 // Der Gast schickt nur seine Eingaben und zeigt an, was ankommt.
 // Zähler für Tastendrücke des Gasts (ps Schuss, rl loslassen, ck Check, lb Lupfer, sw Wechsel, dg Täuschen,
-// sk Wiederholung überspringen, fc/fa Schlägerei fordern/annehmen, fl/fr Fäuste, fd ausweichen)
-const CNT_KEYS = ['ps', 'rl', 'ck', 'lb', 'sw', 'dg', 'sk', 'fc', 'fa', 'fl', 'fr', 'fd'];
+// sk Wiederholung überspringen, fc/fa Schlägerei fordern/annehmen, fl/fr Fäuste, fd ausweichen, sp Sprint)
+const CNT_KEYS = ['ps', 'rl', 'ck', 'lb', 'sw', 'dg', 'sk', 'fc', 'fa', 'fl', 'fr', 'fd', 'sp'];
 function CNT0() { const o = {}; for (const k of CNT_KEYS) o[k] = 0; return o; }
 const net = {
   role: null, lobby: null, peer: null, conn: null, code: '', connected: false, remoteName: '', myName: '', names: ['S1', 'S2'],
   out: [], snaps: [], off: null, sendT: 0, inT: 0, pingT: 0, ping: 0, joinTimer: 0, openTimer: 0, remoteHorn: 'stadion',
-  cnt: CNT0(), last: null, dodgeV: { x: 0, y: 0 },
+  cnt: CNT0(), last: null, dodgeV: { x: 0, y: 0 }, pongAt: 0, emoT: 0,
 };
-// Verbindungshilfe: Google-STUN und die Umleitungsserver (TURN) von PeerJS, zusätzlich über TCP,
-// weil manche Netzwerke (z.B. Schul-WLAN) die übliche Übertragungsart (UDP) sperren
-const PEER_OPTS = { debug: 0, config: { iceServers: [
-  { urls: 'stun:stun.l.google.com:19302' },
-  { urls: ['turn:eu-0.turn.peerjs.com:3478', 'turn:us-0.turn.peerjs.com:3478',
-    'turn:eu-0.turn.peerjs.com:3478?transport=tcp', 'turn:us-0.turn.peerjs.com:3478?transport=tcp'], username: 'peerjs', credential: 'peerjsp' },
-] } };
-const NET_BLOCKED = 'Die Verbindung zwischen euren Laptops wird blockiert. Das passiert oft im Schul-WLAN. Tipp: Macht mit einem Handy einen Hotspot und verbindet beide Laptops damit.';
+// Verbindungshilfe: STUN findet die eigene Adresse im Internet. Geht keine Direktverbindung
+// (mobile Daten, Schul-WLAN), leitet ein Umleitungsserver (TURN) die Daten weiter.
+// Die TURN-Server von PeerJS gibt es nicht mehr (Stand 12.11.2026), darum Metered (Gratis-Konto).
+const STUN = [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun.cloudflare.com:3478'] }];
+const METERED = { app: '', key: '' };   // Zugang zu Metered: App-Name und API-Schlüssel
+let turnList = null;
+async function peerOpts() {
+  if (METERED.app && METERED.key && !turnList) {
+    try {
+      const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 6000);
+      const r = await fetch('https://' + METERED.app + '.metered.live/api/v1/turn/credentials?apiKey=' + encodeURIComponent(METERED.key), { signal: ctl.signal });
+      clearTimeout(to);
+      const list = await r.json();
+      if (Array.isArray(list) && list.length) turnList = list.filter((x) => x && x.urls);
+    } catch (e) { console.warn('TURN-Zugang:', e); }
+  }
+  return { debug: 0, config: { iceServers: STUN.concat(turnList || []) } };
+}
+const NET_BLOCKED = 'Die Verbindung zwischen euren Geräten wird blockiert (z.B. Schul-WLAN oder mobile Daten). Versucht es nochmals. Geht es weiterhin nicht: beide ins gleiche WLAN.';
 const NET_NOSERVER = 'Der Vermittlungsdienst (peerjs.com) antwortet nicht. Bist du online? Im Schul-WLAN ist er vielleicht gesperrt. Tipp: Handy-Hotspot.';
 const PEER_PREFIX = 'eisduell-v3-';
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -4660,7 +4880,7 @@ function netClose(reason) {
   const conn = net.conn, peer = net.peer;
   net.role = null; net.lobby = null; net.conn = null; net.peer = null; net.connected = false; net.code = '';
   net.snaps.length = 0; net.out.length = 0; net.off = null; net.last = null; net.ping = 0; net.remoteName = '';
-  net.cnt = CNT0();
+  net.cnt = CNT0(); net.pongAt = 0; emos.length = 0;
   try { conn && conn.close(); } catch (e) {}
   try { peer && peer.destroy(); } catch (e) {}
   if (!reason) return;
@@ -4680,16 +4900,17 @@ async function netHost() {
   netClose(); net.myName = myName('S1');
   netStatus('Verbinde mit dem Vermittlungsdienst …');
   try { await loadPeerJS(); } catch (e) { netStatus('PeerJS konnte nicht geladen werden. Bist du mit dem Internet verbunden?', 'err'); return; }
+  const opts = await peerOpts();
   const open = (attempt) => {
-    const code = randomCode(), peer = new window.Peer(PEER_PREFIX + code, PEER_OPTS);
+    const code = randomCode(), peer = new window.Peer(PEER_PREFIX + code, opts);
     net.peer = peer; net.lobby = 'host';
     clearTimeout(net.openTimer);
     net.openTimer = setTimeout(() => { if (net.peer === peer && !net.code) netStatus(NET_NOSERVER, 'err'); }, 12000);
     peer.on('open', () => {
       if (net.peer !== peer) return;
       clearTimeout(net.openTimer);
-      net.code = code; $('netCodeShow').textContent = code; renderNet();
-      netStatus('Warte auf deinen Kollegen … Er wählt «Online», dann «Beitreten» und tippt den Code ein.');
+      net.code = code; $('netCodeShow').textContent = code; $('netLink').textContent = inviteUrl(code); renderNet();
+      netStatus('Warte auf deinen Kollegen … Schick ihm den Link («Link teilen») oder sag ihm den Code.');
     });
     peer.on('error', (err) => {
       if (net.peer !== peer) return;
@@ -4713,7 +4934,7 @@ async function netJoin(raw) {
   netClose(); net.myName = myName('S2');
   netStatus('Verbinde …');
   try { await loadPeerJS(); } catch (e) { netStatus('PeerJS konnte nicht geladen werden. Bist du mit dem Internet verbunden?', 'err'); return; }
-  const peer = new window.Peer(PEER_PREFIX + 'g' + randomCode() + randomCode(), PEER_OPTS);
+  const peer = new window.Peer(PEER_PREFIX + 'g' + randomCode() + randomCode(), await peerOpts());
   net.peer = peer; net.lobby = 'guest';
   clearTimeout(net.openTimer);
   net.openTimer = setTimeout(() => { if (net.peer === peer && !net.conn) netStatus(NET_NOSERVER, 'err'); }, 12000);
@@ -4763,6 +4984,81 @@ function setupConn(conn) {
   conn.on('close', () => { if (net.conn === conn) netClose('Die Verbindung wurde getrennt.'); });
   conn.on('error', () => { if (net.conn === conn) netClose('Die Verbindung ist abgebrochen.'); });
 }
+// Einladungslink: ?raum=CODE öffnet das Spiel und tritt direkt bei
+const inviteUrl = (code) => location.origin + location.pathname + '?raum=' + code;
+async function shareInvite() {
+  const code = net.code; if (!code) return;
+  const url = inviteUrl(code), text = 'Spiel mit mir Eisduell! Raumcode ' + code;
+  try {
+    if (navigator.share) { await navigator.share({ title: 'Eisduell', text, url }); return; }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  try { await navigator.clipboard.writeText(url); netStatus('Link kopiert. Schick ihn deinem Kollegen (z.B. per WhatsApp).', 'ok'); }
+  catch (e) { netStatus('Kopieren ging nicht. Schick deinem Kollegen den Link von oben oder den Code.', 'err'); }
+}
+function joinFromLink() {
+  let code = '';
+  try { code = String(new URLSearchParams(location.search).get('raum') || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); } catch (e) {}
+  if (!code) return;
+  try { history.replaceState(null, '', location.pathname); } catch (e) {}   // beim Neuladen nicht nochmals beitreten
+  if (code.length !== 4) return;
+  settings.opp = 'online'; refreshMenu();
+  openSub(netEl, renderNet);
+  $('netCode').value = code;
+  netJoin(code);
+}
+// Emoji-Reaktionen online (Tasten 1–4 oder antippen)
+const EMOJIS = ['🔥', '😂', '😤', '👏'];
+const emos = [];
+function showEmoji(i, team) { emos.push({ e: EMOJIS[i], team, t: 0 }); if (emos.length > 6) emos.shift(); sfx.click(); }
+function sendEmoji(i) {
+  if (!net.connected || screen !== 'game' || realTime - net.emoT < 0.7) return;
+  net.emoT = realTime;
+  send({ t: 'emo', i });
+  showEmoji(i, myTeam());
+}
+function emojiBtns() {   // kleine Knöpfe oben links (nur online)
+  const y = hudTop + 26, r = touchUI ? 18 : 15;
+  return EMOJIS.map((e, i) => ({ x: 22 + i * (r * 2 + 8), y, r }));
+}
+function emojiHit(x, y) {
+  if (!net.role || screen !== 'game' || phase === 'fight') return false;
+  const i = emojiBtns().findIndex((b) => Math.hypot(x - b.x, y - b.y) < b.r + 4);
+  if (i < 0) return false;
+  sendEmoji(i); return true;
+}
+function drawOnline(c, dt) {
+  if (!net.role || screen === 'menu') return;
+  // Emoji-Knöpfe
+  if (screen === 'game' && phase !== 'fight' && phase !== 'replay') {
+    c.textAlign = 'center'; c.textBaseline = 'middle';
+    emojiBtns().forEach((b, i) => {
+      c.fillStyle = 'rgba(10,22,44,0.55)'; c.strokeStyle = 'rgba(196,216,238,0.35)'; c.lineWidth = 1.5;
+      c.beginPath(); c.arc(b.x, b.y, b.r, 0, TAU); c.fill(); c.stroke();
+      c.font = `${Math.round(b.r * 1.05)}px ${FONT}`; c.fillText(EMOJIS[i], b.x, b.y + 1);
+      if (!touchUI) { c.font = `700 9px ${FONT}`; c.fillStyle = '#8aa6c8'; c.fillText(String(i + 1), b.x, b.y + b.r + 8); }
+    });
+  }
+  // aufsteigende Emojis: Cyan-Seite links, Pink-Seite rechts
+  for (let i = emos.length - 1; i >= 0; i--) {
+    const m = emos[i]; m.t += dt;
+    if (m.t > 2.2) { emos.splice(i, 1); continue; }
+    const x = m.team ? vw * 0.72 : vw * 0.28, y = vh * 0.55 - m.t * 70;
+    c.globalAlpha = Math.min(1, (2.2 - m.t) * 2); c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.font = `${Math.round(54 * (m.t < 0.15 ? 0.6 + m.t * 2.7 : 1))}px ${FONT}`; c.fillText(m.e, x, y);
+    c.globalAlpha = 1;
+  }
+  // Verbindungsanzeige: drei Balken, grün / gelb / rot
+  const stale = net.connected && net.pongAt && performance.now() - net.pongAt > 6000;
+  const q = !net.connected || stale ? 0 : (!net.ping ? 2 : (net.ping < 90 ? 3 : (net.ping < 180 ? 2 : 1)));
+  const col = q >= 3 ? '#3ee08f' : (q === 2 ? GOLD : PINK);
+  const x0 = vw - 46, y0 = vh - 10 - safeBottom;
+  for (let k = 0; k < 3; k++) {
+    c.fillStyle = k < q ? col : 'rgba(196,216,238,0.22)';
+    c.fillRect(x0 + k * 7, y0 - 6 - k * 5, 5, 6 + k * 5);
+  }
+  c.textAlign = 'right'; c.textBaseline = 'bottom'; c.font = `700 10px ${FONT}`; c.fillStyle = col;
+  c.fillText(stale ? 'KEINE ANTWORT' : (net.ping ? Math.round(net.ping) + ' ms' : ''), x0 - 6, y0 + 1);
+}
 function onNetData(d) {
   if (!d || typeof d !== 'object') return;
   switch (d.t) {
@@ -4779,7 +5075,8 @@ function onNetData(d) {
     case 'in': if (net.role === 'host') hostInput(d); break;
     case 'again': if (net.role === 'host' && screen === 'over' && performance.now() > canRestartAt) startGame(); break;
     case 'ping': send({ t: 'pong', p: d.p }); break;
-    case 'pong': if (typeof d.p === 'number') net.ping = performance.now() - d.p; break;
+    case 'pong': if (typeof d.p === 'number') { net.ping = performance.now() - d.p; net.pongAt = performance.now(); } break;
+    case 'emo': if (screen === 'game' && (d.i | 0) >= 0 && (d.i | 0) < EMOJIS.length) showEmoji(d.i | 0, net.role === 'host' ? 1 : 0); break;
     case 'bye': netClose('Dein Kollege hat das Spiel verlassen.'); break;
   }
 }
@@ -4793,7 +5090,7 @@ function snapshot() {
     t: 's', ts: +realTime.toFixed(3), ph: phase, tl: r2(timeLeft), g: [goalsFor, goalsAgainst], ot: overtime ? 1 : 0,
     so: shootout && so ? { r: so.res, n: so.turn, d: so.decided } : null,
     ac: [skaters.indexOf(active[0]), skaters.indexOf(active[1])],
-    sk: skaters.map((s) => [r1(s.x), r1(s.y), r2(s.face), r2(s.charging ? s.charge : 0), skFlags(s), s.pw ? PWK.indexOf(s.pw) : -1, r1(s.pwT), r1(s.pen), r1(s.vx), r1(s.vy), r2(s.foul)]),
+    sk: skaters.map((s) => [r1(s.x), r1(s.y), r2(s.face), r2(s.charging ? s.charge : 0), skFlags(s), s.pw ? PWK.indexOf(s.pw) : -1, r1(s.pwT), r1(s.pen), r1(s.vx), r1(s.vy), r2(s.foul), r2(s.sprCD), r2(s.spr)]),
     gk: goalies.map((g) => [r1(g.x), r1(g.y), r2(g.flash)]),
     pk: [r1(puck.x), r1(puck.y), r1(puck.z), r1(puck.vx), r1(puck.vy), puck.owner ? skaters.indexOf(puck.owner) : -1, puck.direct ? 1 : 0, puck.shooter ? puck.shooter.team : 0],
     it: item ? [PWK.indexOf(item.type), r1(item.x), r1(item.y), r2(item.life), r2(item.t)] : null,
@@ -4834,6 +5131,7 @@ function hostInput(d) {
     if (more('lb')) C.lobQueued = true;
     if (more('sw')) C.switchQueued = true;
     if (more('dg')) { const v = Array.isArray(d.dv) ? d.dv : [0, 0]; C.dodgeQueued = { x: +v[0] || 0, y: +v[1] || 0 }; }
+    if (more('sp')) C.sprintQueued = true;
     if (more('sk')) replaySkip();
   }
   net.last = CNT0(); for (const k of CNT_KEYS) net.last[k] = c[k] | 0;
@@ -4896,7 +5194,7 @@ function applySnapshots() {
     s.charging = !!(f & 1); s.charge = lerp(p[3], q[3], k);
     s.dash = f & 2 ? 0.1 : 0; s.dodge = f & 4 ? 0.1 : 0; s.protect = f & 8 ? 0.3 : 0; s.stun = f & 16 ? 0.1 : 0;
     s.follow = f & 32 ? 0.1 : 0; s.poke = f & 64 ? 0.1 : 0; s.brake = f & 128 ? 0.1 : 0; s.out = !!(f & 256); s.oneTimer = f & 512 ? 0.2 : 0; s.back = !!(f & 1024);
-    s.pw = PWK[c[5]] || null; s.pwT = +c[6] || 0; s.pen = +c[7] || 0; s.vx = +q[8] || 0; s.vy = +q[9] || 0; s.foul = +c[10] || 0;
+    s.pw = PWK[c[5]] || null; s.pwT = +c[6] || 0; s.pen = +c[7] || 0; s.vx = +q[8] || 0; s.vy = +q[9] || 0; s.foul = +c[10] || 0; s.sprCD = +c[11] || 0; s.spr = +c[12] || 0;
     s.sx = s.x + Math.cos(s.face) * (s.r + 12); s.sy = s.y + Math.sin(s.face) * (s.r + 12);
   });
   goalies.forEach((g, n) => { const p = a.gk[n], q = b.gk[n]; if (!p || !q) return; g.x = lerp(p[0], q[0], k); g.y = lerp(p[1], q[1], k); g.flash = +cur.gk[n][2] || 0; });
@@ -4922,6 +5220,8 @@ function applySnapshots() {
 }
 function guestTick(dt) {
   if (!net.connected) return;
+  net.pingT += dt;
+  if (net.pingT > 2) { net.pingT = 0; send({ t: 'ping', p: performance.now() }); }
   // Tastendrücke als Zähler verschicken (so geht keiner verloren)
   const C = ctl[0];
   if (C.shootReleased) { C.shootReleased = false; net.cnt.rl++; }
@@ -4929,6 +5229,7 @@ function guestTick(dt) {
   if (C.lobQueued) { C.lobQueued = false; net.cnt.lb++; }
   if (C.switchQueued) { C.switchQueued = false; net.cnt.sw++; }
   if (C.dodgeQueued) { net.dodgeV = C.dodgeQueued; C.dodgeQueued = null; net.cnt.dg++; }
+  if (C.sprintQueued) { C.sprintQueued = false; net.cnt.sp++; }
   for (const [f, k] of [['fChal', 'fc'], ['fAcc', 'fa'], ['fL', 'fl'], ['fR', 'fr'], ['fD', 'fd']]) if (C[f]) { C[f] = false; net.cnt[k]++; }
   if (screen === 'game') { try { applySnapshots(); } catch (e) { console.warn('Online-Stand:', e); } }
   const me = active[1];
@@ -4999,6 +5300,7 @@ $('netCode').addEventListener('keydown', (e) => { if (e.key === 'Enter') netJoin
 $('netCode').addEventListener('input', (e) => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4); });
 $('netName').addEventListener('input', (e) => { const v = cleanName(e.target.value); e.target.value = v; store.setRaw(NAME_KEY, v); });
 $('btnNetGo').addEventListener('click', (e) => { e.currentTarget.blur(); startGame(); });
+$('btnShare').addEventListener('click', (e) => { e.currentTarget.blur(); shareInvite(); });
 $('btnPause').addEventListener('click', (e) => { e.currentTarget.blur(); togglePause(); });
 $('btnMute').addEventListener('click', (e) => { e.currentTarget.blur(); Snd.init(); toggleMute(); });
 function segClick(id, fn) {
@@ -5010,6 +5312,22 @@ function segClick(id, fn) {
   });
 }
 segClick('segOpp', (v) => { settings.opp = v; if (v === 'season') setTab('tab'); });
+segClick('segBtns', (v) => { settings.btns = ['s', 'm', 'l'].includes(v) ? v : 'm'; layoutButtons(); });
+$('btnKeys').addEventListener('click', (e) => { e.currentTarget.blur(); openKeys(); });
+$('btnKeysBack').addEventListener('click', closeSub);
+$('btnKeysDef').addEventListener('click', (e) => {
+  e.currentTarget.blur(); keyCapture = null;
+  binds[keySet] = Object.assign({}, BIND_DEF[keySet]);
+  if (keySet !== 'solo') { const o = keySet === 'p1' ? 'p2' : 'p1'; if (ACTIONS.some((a) => binds[o][a.k] && Object.values(binds[keySet]).includes(binds[o][a.k]))) binds[o] = Object.assign({}, BIND_DEF[o]); }
+  saveBinds(); keyStatus('Standard wiederhergestellt.', 'ok'); renderKeys(); sfx.click();
+});
+$('segKeys').addEventListener('click', (e) => { const v = e.target.dataset && e.target.dataset.v; if (!v) return; e.target.blur(); keySet = v; keyCapture = null; keyStatus(''); renderKeys(); });
+$('keysList').addEventListener('click', (e) => {
+  const b = e.target.closest('.krow'); if (!b) return; b.blur();
+  keyCapture = { set: keySet, a: b.dataset.a };
+  keyStatus(b.dataset.a === 'dodge' ? 'Drück die neue Taste. Esc bricht ab, Rücktaste = keine Taste (nur 2× Richtung).' : 'Drück die neue Taste. Esc bricht ab.');
+  renderKeys();
+});
 segClick('segOrient', (v) => { settings.orient = v === 'hoch' ? 'hoch' : 'quer'; if (settings.orient === 'hoch') unlockOrient(); });
 segClick('segSize', (v) => { settings.size = v === '2' ? 2 : 1; });
 segClick('segLevel', (v) => { settings.level = +v; });
@@ -5090,6 +5408,7 @@ KM = keyMap();
 resize();
 toMenu();
 requestAnimationFrame((t) => { last = t; requestAnimationFrame(frame); });
+joinFromLink();
 
 // Testzugang für automatische Tests (über die Browser-Konsole): spult das Spiel vor
 window.__eis = {

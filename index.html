@@ -395,7 +395,7 @@
     <div class="status" id="netStatus"></div>
     <p class="tip" style="margin-top:4px"><b>Klappt es nicht?</b> Geht keine Direktverbindung (Schul-WLAN, mobile Daten), läuft das Spiel über einen Umleitungsserver. Seid ihr im gleichen WLAN, geht es meistens direkt. Ein Spiel braucht etwa 1–2 MB Daten.</p>
     <div class="row"><button class="btn ghost small" id="btnNetBack">Zurück<span class="keyhint">ESC</span></button></div>
-    <p class="small">Zum Verbinden nutzt das Spiel den kostenlosen Dienst PeerJS (peerjs.com) und, wenn nötig, den Umleitungsserver von Metered (metered.ca). Sie sehen nur den Raumcode, die Netzwerkadressen und die Spieldaten, keine Namen. Wer eröffnet, spielt Cyan und rechnet das Spiel; wer beitritt, spielt Pink und schiesst nach links. Online: Tasten 1–4 senden ein Emoji.</p>
+    <p class="small">Zum Verbinden nutzt das Spiel den kostenlosen Dienst PeerJS (peerjs.com) und, wenn nötig, den Umleitungsserver von ExpressTURN (expressturn.com). Sie sehen nur den Raumcode, die Netzwerkadressen und die Spieldaten, keine Namen. Wer eröffnet, spielt Cyan und rechnet das Spiel; wer beitritt, spielt Pink und schiesst nach links. Online: Tasten 1–4 senden ein Emoji.</p>
   </div>
 </div>
 
@@ -4838,21 +4838,15 @@ const net = {
 };
 // Verbindungshilfe: STUN findet die eigene Adresse im Internet. Geht keine Direktverbindung
 // (mobile Daten, Schul-WLAN), leitet ein Umleitungsserver (TURN) die Daten weiter.
-// Die TURN-Server von PeerJS gibt es nicht mehr (Stand 12.11.2026), darum Metered (Gratis-Konto).
-const STUN = [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun.cloudflare.com:3478'] }];
-const METERED = { app: '', key: '' };   // Zugang zu Metered: App-Name und API-Schlüssel
-let turnList = null;
-async function peerOpts() {
-  if (METERED.app && METERED.key && !turnList) {
-    try {
-      const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 6000);
-      const r = await fetch('https://' + METERED.app + '.metered.live/api/v1/turn/credentials?apiKey=' + encodeURIComponent(METERED.key), { signal: ctl.signal });
-      clearTimeout(to);
-      const list = await r.json();
-      if (Array.isArray(list) && list.length) turnList = list.filter((x) => x && x.urls);
-    } catch (e) { console.warn('TURN-Zugang:', e); }
-  }
-  return { debug: 0, config: { iceServers: STUN.concat(turnList || []) } };
+// Die TURN-Server von PeerJS gibt es nicht mehr (Stand 12.11.2026), darum ExpressTURN (Gratis-Konto,
+// 1000 GB pro Monat). Port 3478 über UDP und TCP; 80/443 gibt es im Gratis-Plan nicht.
+const ICE = [
+  { urls: ['stun:stun.l.google.com:19302', 'stun:stun.cloudflare.com:3478'] },
+  { urls: ['turn:free.expressturn.com:3478', 'turn:free.expressturn.com:3478?transport=tcp'],
+    username: '000000002109908463', credential: 'GxdViBscENH7YhBeVnqoVkPIgdE=' },
+];
+async function peerOpts() {   // __eis.relayOnly: zum Testen nur über den Umleitungsserver verbinden
+  return { debug: 0, config: { iceServers: ICE, iceTransportPolicy: window.__eis && window.__eis.relayOnly ? 'relay' : 'all' } };
 }
 const NET_BLOCKED = 'Die Verbindung zwischen euren Geräten wird blockiert (z.B. Schul-WLAN oder mobile Daten). Versucht es nochmals. Geht es weiterhin nicht: beide ins gleiche WLAN.';
 const NET_NOSERVER = 'Der Vermittlungsdienst (peerjs.com) antwortet nicht. Bist du online? Im Schul-WLAN ist er vielleicht gesperrt. Tipp: Handy-Hotspot.';

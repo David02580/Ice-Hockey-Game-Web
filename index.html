@@ -198,10 +198,29 @@
   .lbl { font-size: 10.5px; font-weight: 800; letter-spacing: 0.16em; color: var(--muted); text-transform: uppercase; }
   .srow .seg { margin: 0; }
   .mright { background: rgba(255, 255, 255, 0.025); border: 1px solid rgba(46, 230, 255, 0.14); border-radius: 16px; padding: 12px; text-align: left; }
-  .tabs { display: flex; gap: 4px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 4px; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 4px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 4px; }
   .tabs button { flex: 1; font: 800 12.5px var(--font); letter-spacing: 0.06em; color: var(--muted); background: none; border: 0; padding: 8px 6px; border-radius: 9px; cursor: pointer; }
   .tabs button.on { background: rgba(46, 230, 255, 0.16); color: #fff; box-shadow: inset 0 0 0 1px rgba(46, 230, 255, 0.5); }
   .tabpage { margin-top: 10px; }
+  .intro { margin: 14px 0 10px; padding: 18px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(46, 230, 255, 0.2); text-align: center; }
+  .intro .ico { font-size: 42px; line-height: 1; }
+  .intro b { display: block; margin: 8px 0 6px; font-size: 13px; letter-spacing: 0.18em; color: var(--gold); }
+  .intro p { margin: 0; font-size: 15px; line-height: 1.5; }
+  .intro kbd, .intro .k { font-weight: 800; color: var(--cyan); }
+  .dots { text-align: center; margin-bottom: 4px; }
+  .dots i { display: inline-block; width: 8px; height: 8px; margin: 0 4px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); }
+  .dots i.on { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+  @media (max-height: 520px) {   /* Handy quer: Einführung kompakt, damit die Knöpfe ohne Scrollen sichtbar sind */
+    #introPanel .panel { padding: 12px 16px 10px; }
+    #introPanel .kicker, #introPanel h1 { display: none; }
+    .intro { margin: 0 0 6px; padding: 10px 12px; }
+    .intro .ico { font-size: 26px; }
+    .intro b { margin: 4px 0; }
+    .intro p { font-size: 14px; line-height: 1.4; }
+    #introNote { margin: 4px 0 0; }
+    #introPanel .row { margin-top: 4px; }
+    #introPanel .btn { min-width: 0; font-size: 15px; padding: 10px 18px; margin: 3px; }
+  }
   .wk { margin: 8px 0; padding: 9px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(46, 230, 255, 0.14); }
   .wk > div { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
   .wk b { color: var(--gold); white-space: nowrap; }
@@ -313,6 +332,7 @@
           <div class="srow"><span class="lbl">Gegner</span><div class="seg" id="segOpp"><button data-v="cpu">Computer</button><button data-v="local">Zu zweit</button><button data-v="online">Online</button><button data-v="cup">Turnier</button><button data-v="season">Saison</button></div></div>
           <div class="srow"><span class="lbl">Aufstellung</span><div class="seg" id="segSize"><button data-v="1">1 gegen 1</button><button data-v="2">2 gegen 2</button></div></div>
           <div class="srow" id="rowLevel"><span class="lbl">Stufe</span><div class="seg" id="segLevel"><button data-v="0">Leicht</button><button data-v="1">Normal</button><button data-v="2">Profi</button></div></div>
+          <div class="srow" id="rowRules"><span class="lbl">Regeln</span><div class="seg" id="segRules"><button data-v="arcade">Arcade</button><button data-v="echt">Abseits + Icing</button></div></div>
           <div class="srow" id="rowCtl"><span class="lbl">Steuerung</span><div class="seg" id="segCtl"><button data-v="keys">Tastatur</button><button data-v="mouse">Maus</button></div></div>
         </div>
         <div class="cup hide" id="cupBar"></div>
@@ -355,7 +375,9 @@
           <p class="tip"><b>Pass fordern:</b> Ohne Puck fordert die Check-Taste (Maus: rechte Taste) beim Mitspieler einen Pass.</p>
           <p class="tip"><b>Bully:</b> Der Schiri lässt den Puck nach kurzer, zufälliger Zeit fallen. Drück Schuss genau dann – wer zu früh drückt, verliert. Mit einer Richtung (Joystick oder Pfeile) wählst du, wohin du den Puck ziehst; ohne Richtung geht er zum Mitspieler.</p>
           <p class="tip"><b>Sprint:</b> Gibt dir 1,5 Sekunden lang Tempo. Danach braucht er 3 Sekunden Pause; der weisse Bogen um deinen Spieler zeigt, wann er wieder bereit ist. Ideal für einen Konter.</p>
+          <p class="tip"><b>Abseits und Icing</b> (im Menü bei «Regeln» einschalten): Ohne Puck darfst du erst nach dem Puck über die blaue Linie in die gegnerische Zone. Schiesst du den Puck aus deiner Hälfte bis hinter die gegnerische Torlinie, ohne dass ihn jemand berührt, gibt es Icing und ein Bully vor deinem Tor. In Unterzahl ist Icing erlaubt. Online gilt, was der Gastgeber eingestellt hat.</p>
           <p class="tip"><b>Schlägerei:</b> Abwechselnd links und rechts schlagen gibt mehr Wucht. Weichst du im richtigen Moment aus, stolpert der Gegner und du kannst kontern. Wer viel schlägt, wird müde.</p>
+          <div class="row" style="margin:4px 0 10px"><button class="btn ghost small" id="btnIntro">Einführung nochmals zeigen</button></div>
           <p class="tip"><b>Controller:</b> A Schuss · B Check/Pass · X Lupfer · Y Wechsel · RT Sprint · LB/RB Täuschen · rechter Stick zielt. Schlägerei: View-Taste herausfordern, A annehmen, LB/RB Fäuste, B ausweichen.</p>
         </div>
         <div class="tabpage hide" id="pg-hs">
@@ -418,6 +440,18 @@
   </div>
 </div>
 
+<!-- Einführung beim ersten Start -->
+<div id="introPanel" class="overlay hidden">
+  <div class="panel" style="width:min(460px,100%)">
+    <div class="kicker">WILLKOMMEN BEI</div>
+    <h1 style="font-size:clamp(30px,min(10vw,10vh),56px)">EIS<span>DUELL</span></h1>
+    <div class="intro" id="introCard"></div>
+    <div class="dots" id="introDots"></div>
+    <p class="small" id="introNote"></p>
+    <div class="row"><button class="btn ghost" id="btnIntroSkip">Überspringen</button><button class="btn" id="btnIntroNext"><span id="introNextLabel">Weiter</span><span class="keyhint">ENTER</span></button></div>
+  </div>
+</div>
+
 <!-- Handy-Einstellungen -->
 <div id="touchPanel" class="overlay hidden">
   <div class="panel" style="width:min(480px,100%)">
@@ -429,9 +463,10 @@
       <div class="srow"><span class="lbl">Zielhilfe</span><div class="seg" id="segAim"><button data-v="an">An</button><button data-v="aus">Aus</button></div></div>
       <div class="srow"><span class="lbl">Joystick</span><div class="seg" id="segJoy"><button data-v="wander">Mitwandernd</button><button data-v="fest">Fest</button></div></div>
       <div class="srow"><span class="lbl">Tempo</span><div class="seg" id="segSens"><button data-v="f">Fein</button><button data-v="m">Mittel</button><button data-v="d">Direkt</button></div></div>
+      <div class="srow"><span class="lbl">Effekte</span><div class="seg" id="segFx"><button data-v="auto">Automatisch</button><button data-v="spar">Sparen</button><button data-v="voll">Voll</button></div></div>
       <div class="srow" id="rowVib"><span class="lbl">Vibration</span><div class="seg" id="segVib"><button data-v="an">An</button><button data-v="aus">Aus</button></div></div>
     </div>
-    <p class="tip" style="text-align:left;margin-top:10px"><b>Zielhilfe:</b> Ein Schuss geht automatisch in die freie Tor-Ecke, wenn das Tor ungefähr vor dir liegt.<br><b>Joystick:</b> «Mitwandernd» entsteht dort, wo du hintippst. «Fest» bleibt immer unten links.<br><b>Tempo:</b> «Fein» braucht mehr Ausschlag für volles Tempo, «Direkt» schon wenig.</p>
+    <p class="tip" style="text-align:left;margin-top:10px"><b>Zielhilfe:</b> Ein Schuss geht automatisch in die freie Tor-Ecke, wenn das Tor ungefähr vor dir liegt.<br><b>Joystick:</b> «Mitwandernd» entsteht dort, wo du hintippst. «Fest» bleibt immer unten links.<br><b>Tempo:</b> «Fein» braucht mehr Ausschlag für volles Tempo, «Direkt» schon wenig.<br><b>Effekte:</b> «Sparen» lässt Funken, Spuren und Leuchten weg und rechnet mit weniger Bildpunkten. «Automatisch» schaltet selbst um, wenn das Spiel ruckelt.<span id="fxNote"></span></p>
     <p class="small hide" id="vibNote">Vibration geht nur auf Android-Handys, das iPhone erlaubt sie Webseiten nicht.</p>
     <div class="row"><button class="btn" id="btnTouchBack">Fertig<span class="keyhint">ESC</span></button></div>
   </div>
@@ -738,7 +773,7 @@ const store = {
 };
 // Einstellungen: Gegner (cpu | local | online | cup), Aufstellung (1 oder 2), Stufe, Steuerung (keys | mouse)
 // Handy: orient = quer (Standard, Querformat festhalten) oder hoch (Hochformat erlaubt, Feld wird gedreht)
-const settings = { opp: 'cpu', size: 1, level: 1, ctl: 'keys', orient: 'quer', btns: 'm', aim: 'an', joy: 'wander', sens: 'm', vib: 'an', netTime: 90, netRink: 'mine', netBo: 'one' };
+const settings = { opp: 'cpu', size: 1, level: 1, ctl: 'keys', orient: 'quer', btns: 'm', aim: 'an', joy: 'wander', sens: 'm', vib: 'an', netTime: 90, netRink: 'mine', netBo: 'one', fx: 'auto', autoLow: false, rules: 'arcade' };
 {
   const s = store.get('eisduell-einstellungen', {});
   if (s && typeof s === 'object') {
@@ -747,12 +782,15 @@ const settings = { opp: 'cpu', size: 1, level: 1, ctl: 'keys', orient: 'quer', b
     else if (s.mode === '2p') settings.opp = 'local';          // alte Einstellung übernehmen
     if (s.size === 2) settings.size = 2;
     if ([0, 1, 2].includes(s.level)) settings.level = s.level;
+    if (s.rules === 'echt') settings.rules = 'echt';
     if (s.ctl === 'mouse') settings.ctl = 'mouse';
     if (['s', 'm', 'l'].includes(s.btns)) settings.btns = s.btns;
     if (s.aim === 'aus') settings.aim = 'aus';
     if (s.joy === 'fest') settings.joy = 'fest';
     if (['f', 'm', 'd'].includes(s.sens)) settings.sens = s.sens;
     if (s.vib === 'aus') settings.vib = 'aus';
+    if (s.fx === 'spar' || s.fx === 'voll') settings.fx = s.fx;
+    if (s.autoLow === true) settings.autoLow = true;
     if ([60, 90, 180].includes(s.netTime)) settings.netTime = s.netTime;
     if (typeof s.netRink === 'string') settings.netRink = s.netRink;
     if (s.netBo === 'bo3') settings.netBo = 'bo3';
@@ -1308,7 +1346,23 @@ const sfx = {
 // ================== Zeichenfläche und Bildschirmgrösse ==================
 const cv = document.getElementById('game');
 const ctx = cv.getContext('2d', { alpha: false });
-let flip = false;   // Online-Gast: Feld halb gedreht, damit er auch von links nach rechts spielt
+let flip = false;
+// Sparmodus: weniger Effekte und tiefere Auflösung, damit es auf schwachen Geräten flüssig läuft.
+// settings.fx: 'auto' (misst das Tempo und schaltet bei Bedarf selbst um), 'spar' (immer) oder 'voll' (nie).
+let lowFx = false, fxAvg = 1 / 60, fxSlowT = 0;
+function applyFx() {
+  const nl = settings.fx === 'spar' || (settings.fx === 'auto' && settings.autoLow);
+  if (nl !== lowFx) { lowFx = nl; if (vw) resize(); }
+}
+function fxMeter(dt) {   // läuft jedes Bild: zu langsam über 4 s → Sparmodus an (bleibt gespeichert)
+  if (settings.fx !== 'auto' || settings.autoLow || screen !== 'game' || phase !== 'play' || document.hidden || dt <= 0 || dt > 0.25) return;
+  fxAvg += (dt - fxAvg) * 0.05;
+  fxSlowT = fxAvg > 1 / 40 ? fxSlowT + dt : Math.max(0, fxSlowT - dt * 0.5);
+  if (fxSlowT > 4) {
+    settings.autoLow = true; saveSettings(); applyFx();
+    toast('SPARMODUS AN · weniger Effekte, dafür flüssiger', '#c4d8ee');
+  }
+}   // Online-Gast: Feld halb gedreht, damit er auch von links nach rechts spielt
 let dpr = 1, vw = 0, vh = 0, portrait = false, scale = 1, ox = 0, oy = 0, safeTop = 0, safeBottom = 0, hudTop = 58;
 let touchUI = matchMedia('(pointer: coarse)').matches;
 sfx.pass = () => { Snd.hiss(0.07, 0.22, 2600, 'bandpass', 1.5); Snd.tone(600, 0.06, 'triangle', 0.1, 900); };
@@ -1365,7 +1419,8 @@ function layoutButtons() {
   }
 }
 function resize() {
-  dpr = Math.min(window.devicePixelRatio || 1, touchUI ? 1.5 : 2);   // Handy: etwas tiefere Auflösung, läuft flüssiger
+  lowFx = settings.fx === 'spar' || (settings.fx === 'auto' && settings.autoLow);
+  dpr = Math.min(window.devicePixelRatio || 1, lowFx ? 1 : (touchUI ? 1.5 : 2));   // Handy und Sparmodus: tiefere Auflösung, läuft flüssiger
   vw = window.innerWidth; vh = window.innerHeight;
   cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);
   safeTop = document.getElementById('safe').getBoundingClientRect().height;
@@ -1492,6 +1547,8 @@ function buildRink() {
     glowLine(RK.b, 2.5, 8, () => { g.beginPath(); g.arc(x, y, 58, 0, TAU); g.stroke(); });
     g.fillStyle = RK.b; g.beginPath(); g.arc(x, y, 6, 0, TAU); g.fill();
   }
+  g.fillStyle = RK.b;   // Bullypunkte in der neutralen Zone
+  for (const x of [BL0 + 70, BL1 - 70]) for (const y of [CY - 145, CY + 145]) { g.beginPath(); g.arc(x, y, 6, 0, TAU); g.fill(); }
   g.restore();
 
   // Bande
@@ -1612,7 +1669,7 @@ function decoUnderIce(g, s) {   // unter dem Eis (schon auf die Eisfläche zuges
 // Bewegte Effekte (ohne gespeicherten Zustand: alles aus der Zeit berechnet). layer: 'under' (unter den Figuren) oder 'over'
 const fxHash = (i, k) => { const v = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return v - Math.floor(v); };
 function drawArenaFx(c, layer) {
-  const f = RK.fx; if (!f || reduceMotion) return;
+  const f = RK.fx; if (!f || reduceMotion || lowFx) return;   // Schnee, Funken usw. nicht im Sparmodus
   const t = realTime, FW = W + PAD * 2, FH = H + PAD * 2;
   if (f === 'snow' && layer === 'over') {   // Schneefall über allem
     c.fillStyle = '#ffffff';
@@ -1654,7 +1711,6 @@ function makeGlow(color, size = 128) {
   gr.addColorStop(0, color); gr.addColorStop(1, 'rgba(0,0,0,0)');
   g.fillStyle = gr; g.fillRect(0, 0, size, size); return c;
 }
-const glowPink = makeGlow('rgba(255,61,127,0.5)');
 const glowGold = makeGlow('rgba(255,210,63,0.85)'), glowWhite = makeGlow('rgba(210,245,255,0.75)');
 function applyLook() {
   T0 = JERSEYS.find((j) => j.id === wardrobe.jersey && totalPts >= j.cost) || JERSEYS[0];
@@ -1757,6 +1813,7 @@ function spawn(x, y, vx, vy, life, size, color, kind = 0, drag = 3) {
   p.kind = kind; p.drag = drag; p.rot = rand(0, TAU); p.vr = rand(-12, 12);
 }
 function burst(x, y, n, cols, spMin, spMax, life, size, kind = 0, drag = 3, ang = null, spread = Math.PI) {
+  if (lowFx) n = Math.ceil(n / 3);   // Sparmodus: ein Drittel der Teilchen
   for (let i = 0; i < n; i++) {
     const a = ang === null ? rand(0, TAU) : ang + rand(-spread, spread), sp = rand(spMin, spMax);
     spawn(x, y, Math.cos(a) * sp, Math.sin(a) * sp, life * rand(0.6, 1.2), size * rand(0.6, 1.3), pick(cols), kind, drag);
@@ -2139,6 +2196,10 @@ function aiThink(s, dt) {
       else { tx = own.x - own.dir * 170; ty = CY + (puck.y - CY) * 0.35; }
     }
   }
+  if (rulesOn() && s !== ow) {   // Abseits vermeiden: erst nach dem Puck in die Angriffszone
+    const bl = attack.dir > 0 ? BL1 : BL0;
+    if ((puck.x - bl) * attack.dir <= 0 && (tx - bl) * attack.dir > -26) tx = bl - attack.dir * 34;
+  }
   const dx = tx - s.x, dy = ty - s.y, d = Math.hypot(dx, dy);
   if (d < 4) return { x: 0, y: 0 };
   const arrive = clamp(d / 60, 0.25, 1);
@@ -2296,11 +2357,52 @@ function updateGoalie(gk, dt) {
 }
 const coverAllowed = () => phase === 'play' && !shootout && !trainOn() && !miniOn() && !fight;
 let nextSpot = null;   // Bully-Punkt fürs nächste Bully (null = Mitte)
+// ================== Abseits und Icing (wählbar) ==================
+const BL0 = W * 0.335, BL1 = W * 0.665;   // blaue Linien (links, rechts)
+let rulePrevX = W / 2, rulePrevOwner = null, iceT = null;   // iceT: Team, das den Puck aus der eigenen Hälfte weggespielt hat
+const rulesOn = () => settings.rules === 'echt' && screen === 'game' && !shootout && !trainOn() && !miniOn() && (solo() || versus());
+const sideDot = () => (puck.y < CY ? CY - 145 : CY + 145);
+function ruleWhistle(txt, sub, spot) {   // Pfiff: Spiel steht kurz, dann Bully am angegebenen Punkt
+  puck.vx = puck.vy = 0; puck.owner = null; iceT = null;
+  sfx.whistle();
+  showBanner(txt, sub, GOLD, '', 1.0);
+  nextSpot = spot; nextLean = 0;
+  phase = 'goal'; goalTimer = 1.5; replay = null;
+}
+function ruleTick() {   // nach jedem Rechenschritt im laufenden Spiel
+  const x = puck.x, px = rulePrevX, ow = puck.owner, prevOw = rulePrevOwner;
+  rulePrevX = x; rulePrevOwner = ow;
+  if (!rulesOn()) { iceT = null; return; }
+  // Icing: Puck verlässt den Schläger in der eigenen Hälfte …
+  if (ow) iceT = null;
+  else if (prevOw) {
+    const t = prevOw.team, ownHalf = t === 0 ? px < W / 2 : px > W / 2;
+    const shortHanded = teams[t].filter(onIce).length < teams[1 - t].filter(onIce).length;   // in Unterzahl erlaubt
+    iceT = ownHalf && !shortHanded ? t : null;
+  }
+  // … und rutscht unberührt über die gegnerische Torlinie (aber nicht ins Tor)
+  if (iceT !== null && !puck.inNet && (iceT === 0 ? x > GL_R + 4 : x < GL_L - 4)) {
+    const t = iceT;
+    ruleWhistle('ICING', teamLabel(t, true) + ' · Bully vor dem eigenen Tor', { x: t === 0 ? GL_L + 150 : GL_R - 150, y: sideDot() });
+    return;
+  }
+  // Abseits: Puck kommt in die Angriffszone, ein Mitspieler war schon ganz drin
+  for (let t = 0; t < 2; t++) {
+    const bl = t === 0 ? BL1 : BL0, dir = t === 0 ? 1 : -1;
+    if ((px - bl) * dir > 0 || (x - bl) * dir <= 0) continue;
+    if (!((ow && ow.team === t) || (!ow && puck.lastTeam === t))) continue;
+    if (teams[t].some((m) => onIce(m) && m !== ow && (m.x - bl) * dir > m.r)) {
+      ruleWhistle('ABSEITS', teamLabel(t, true) + ' · zu früh in der Zone', { x: bl - dir * 70, y: sideDot() });
+      return;
+    }
+  }
+}
+
 function goalieCover(gk) {
   const g = goals[gk.team];
   gk.coverT = 0; gk.flash = 0.7;
   puck.vx = puck.vy = 0; puck.owner = null; puck.x = gk.x - g.dir * 6; puck.y = gk.y;
-  stats.saves++; tstat[gk.team].saves++;
+  stats.saves++; tstat[gk.team].saves++; iceT = null;
   sfx.save(); sfx.whistle();
   if (screen === 'game') popText(gk.x - g.dir * 10, gk.y - 44, 'ABGEDECKT', teamC(gk.team), 20);
   nextSpot = { x: gk.team === 0 ? GL_L + 150 : GL_R - 150, y: puck.y < CY ? CY - 145 : CY + 145 };
@@ -2413,7 +2515,7 @@ function updatePuck(dt) {
     puck.z = 0; puck.vz = 0; puck.lob = false;
     if (spd < 170 && coverAllowed()) { puck.vx *= 0.15; puck.vy *= 0.15; continue; }   // langsam: liegen lassen, der Goalie deckt ab
     if (spd < 260) { stats.clears++; clearPuck(g, 360); continue; }
-    stats.saves++; tstat[gk.team].saves++;
+    stats.saves++; tstat[gk.team].saves++; iceT = null;
     puck.vx -= 1.6 * vn * nx; puck.vy -= 1.6 * vn * ny;
     puck.vx *= 0.6; puck.vy = puck.vy * 0.6 + rand(-120, 120);
     gk.flash = 1; sfx.save(); addShake(0.18);
@@ -2646,6 +2748,7 @@ function faceoff(lean, spot) {
   for (const t of trail) { t.x = puck.x; t.y = puck.y; }
   for (const gk of goalies) { gk.y = gk.ty = CY; gk.x = goals[gk.team].x - goals[gk.team].dir * 20; gk.coverT = 0; }
   aiDelay = 0; replay = null;
+  rulePrevX = fx; rulePrevOwner = null; iceT = null;
   const drop = rand(1.1, 1.9);
   fo = { x: fx, y: fy, t: 0, drop, dropped: false, press: [null, null], early: [false, false], ai: [foAiTime(0, drop), foAiTime(1, drop)] };
   if (screen === 'game') {
@@ -3747,6 +3850,7 @@ addEventListener('keydown', (e) => {
   if (e.code === 'KeyF') { toggleFull(); return; }
   keys[e.code] = true;
   if (screen === 'menu') {
+    if (subPanel === introEl) { if (e.code === 'Enter') introNext(); else if (e.code === 'Escape') introSkip(); return; }
     if (subPanel) { if (e.code === 'Escape' || (e.code === 'Enter' && subPanel !== netEl)) closeSub(); return; }
     if (e.code === 'Enter' || e.code === 'Space') menuStart();
     return;
@@ -4056,17 +4160,17 @@ function step(dt) {
   for (const gk of goalies) updateGoalie(gk, dt);
   if (live && !shootout && !trainOn() && !miniOn()) updateItem(dt);
   updatePuck(dt);
+  if (live && phase === 'play') ruleTick();
   if (live && puck.owner) tstat[puck.owner.team].poss += dt;
   if (screen === 'game' && !shootout && (live || phase === 'goal')) { recTick ^= 1; if (recTick) recFrame(); }
 }
 
 // ================== Effekte pro Bild ==================
-let markFade = 0;
 function skaterFx(s, dt) {
   if (s.out) { s.mx = null; return; }
   const sp = Math.hypot(s.vx, s.vy);
   const px = -Math.sin(s.face) * 6, py = Math.cos(s.face) * 6;
-  if (s.mx !== null && sp > 40) {
+  if (s.mx !== null && sp > 40 && !lowFx) {   // Kufenspuren (nicht im Sparmodus)
     mctx.strokeStyle = `rgba(${RK.mark},${s.brake > 0 ? 0.35 : 0.1})`;
     mctx.lineWidth = s.brake > 0 ? 3 : 1.4;
     mctx.beginPath();
@@ -4077,7 +4181,7 @@ function skaterFx(s, dt) {
   s.mx = s.x; s.my = s.y;
   if (s.brake > 0 && sp > 60) {
     const a = Math.atan2(s.vy, s.vx);
-    for (let i = 0; i < 3; i++) spawn(s.x + rand(-8, 8), s.y + rand(-8, 8), Math.cos(a + rand(-1.2, 1.2)) * rand(120, 320), Math.sin(a + rand(-1.2, 1.2)) * rand(120, 320), rand(0.25, 0.5), rand(2, 4), pick(iceCols()), 0, 5);
+    for (let i = 0; i < (lowFx ? 1 : 3); i++) spawn(s.x + rand(-8, 8), s.y + rand(-8, 8), Math.cos(a + rand(-1.2, 1.2)) * rand(120, 320), Math.sin(a + rand(-1.2, 1.2)) * rand(120, 320), rand(0.25, 0.5), rand(2, 4), pick(iceCols()), 0, 5);
     if (screen === 'game') sfx.scrape();
   }
   if (s.dash > 0 || s.dodge > 0) spawn(s.x + rand(-10, 10), s.y + rand(-10, 10), -s.vx * 0.2, -s.vy * 0.2, 0.25, 3, teamC(s.team), 0, 4);
@@ -4367,10 +4471,12 @@ function drawPuck(c) {
   }
   // Lupfer: Puck wird höher gezeichnet, der Schatten bleibt auf dem Eis
   const up = toWorld(0, -1), hz = puck.z * 0.7, px = puck.x + up.x * hz, py = puck.y + up.y * hz, k = 1 + puck.z / 90;
-  c.globalCompositeOperation = 'lighter';
-  const gs2 = 44 + clamp(spd / 20, 0, 50);
-  c.drawImage(glowWhite, px - gs2 / 2, py - gs2 / 2, gs2, gs2);
-  c.globalCompositeOperation = 'source-over';
+  if (!lowFx) {   // Leuchten um den Puck
+    c.globalCompositeOperation = 'lighter';
+    const gs2 = 44 + clamp(spd / 20, 0, 50);
+    c.drawImage(glowWhite, px - gs2 / 2, py - gs2 / 2, gs2, gs2);
+    c.globalCompositeOperation = 'source-over';
+  }
   const sk = 1 - Math.min(0.45, puck.z / 110);
   c.fillStyle = `rgba(0,0,0,${0.4 * sk})`; ellipse(c, puck.x + 2, puck.y + 3, puck.r * sk, puck.r * 0.85 * sk);
   const PK = myPuck();
@@ -4407,7 +4513,7 @@ function drawParts(c) {
 
 function drawWorld(c) {
   c.drawImage(rinkCv, -PAD, -PAD, W + PAD * 2, H + PAD * 2);
-  c.drawImage(marksCv, -PAD, -PAD, W + PAD * 2, H + PAD * 2);
+  if (!lowFx) c.drawImage(marksCv, -PAD, -PAD, W + PAD * 2, H + PAD * 2);
   drawArenaFx(c, 'under');
   // Torlicht
   c.globalCompositeOperation = 'lighter';
@@ -4423,7 +4529,7 @@ function drawWorld(c) {
   for (const s of skaters) if (onIce(s)) c.drawImage(teamG(s.team), s.x - 45, s.y - 45, 90, 90);
   for (const gk of goalies) {
     c.drawImage(teamG(gk.team), gk.x - 40, gk.y - 40, 80, 80);
-    if (gk.flash > 0) { const s = 90 * gk.flash; c.globalAlpha = gk.flash; c.drawImage(glowWhite, gk.x - s, gk.y - s, s * 2, s * 2); c.globalAlpha = 1; }
+    if (gk.flash > 0 && !lowFx) { const s = 90 * gk.flash; c.globalAlpha = gk.flash; c.drawImage(glowWhite, gk.x - s, gk.y - s, s * 2, s * 2); c.globalAlpha = 1; }
   }
   c.globalCompositeOperation = 'source-over';
 
@@ -4789,6 +4895,7 @@ let last = performance.now(), acc = 0, markFadeT = 0;
 function frame(now) {
   requestAnimationFrame(frame);
   if ((net.role === 'guest') !== flip) { flip = !flip; buildRink(); }
+  fxMeter((now - last) / 1000);
   const dt = (now - last) / 1000; last = now;
   tick(dt);
 }
@@ -4873,10 +4980,10 @@ function renderLeague(el) {
 
 // ================== Bildschirme ==================
 const $ = (id) => document.getElementById(id);
-const menuEl = $('menu'), pauseEl = $('pause'), overEl = $('over'), achEl = $('achPanel'), wardEl = $('wardPanel'), netEl = $('netPanel'), miniEl = $('miniPanel'), keysEl = $('keysPanel'), touchEl = $('touchPanel'), hudBtns = $('hudBtns');
+const menuEl = $('menu'), pauseEl = $('pause'), overEl = $('over'), achEl = $('achPanel'), wardEl = $('wardPanel'), netEl = $('netPanel'), miniEl = $('miniPanel'), keysEl = $('keysPanel'), touchEl = $('touchPanel'), introEl = $('introPanel'), hudBtns = $('hudBtns');
 let hsList = [], hsIdx = -1;
 function showOnly(el) {
-  for (const o of [menuEl, pauseEl, overEl, achEl, wardEl, netEl, miniEl, keysEl, touchEl]) o.classList.toggle('hidden', o !== el);
+  for (const o of [menuEl, pauseEl, overEl, achEl, wardEl, netEl, miniEl, keysEl, touchEl, introEl]) o.classList.toggle('hidden', o !== el);
   $('btnPause').classList.toggle('hide', screen !== 'game');
 }
 // Vollbild (Taste F oder Knopf oben rechts)
@@ -4908,7 +5015,7 @@ function unlockOrient() { try { const o = window.screen.orientation; if (o && o.
 if (document.fullscreenEnabled || document.webkitFullscreenEnabled) $('btnFull').classList.remove('hide');
 document.addEventListener('fullscreenchange', updFull);
 document.addEventListener('webkitfullscreenchange', updFull);
-function saveSettings() { store.set('eisduell-einstellungen', { opp: settings.opp, size: settings.size, level: settings.level, ctl: settings.ctl, orient: settings.orient, btns: settings.btns, aim: settings.aim, joy: settings.joy, sens: settings.sens, vib: settings.vib, netTime: settings.netTime, netRink: settings.netRink, netBo: settings.netBo }); }
+function saveSettings() { store.set('eisduell-einstellungen', { opp: settings.opp, size: settings.size, level: settings.level, ctl: settings.ctl, orient: settings.orient, btns: settings.btns, aim: settings.aim, joy: settings.joy, sens: settings.sens, vib: settings.vib, fx: settings.fx, autoLow: settings.autoLow, rules: settings.rules, netTime: settings.netTime, netRink: settings.netRink, netBo: settings.netBo }); }
 function menuNote(txt) { const el = $('menuNote'); el.textContent = txt || ''; el.classList.toggle('hide', !txt); }
 const cleanName = (v) => String(v || '').toUpperCase().replace(/[^A-Z0-9ÄÖÜ]/g, '').slice(0, 3);
 const myName = (fallback) => cleanName(store.raw(NAME_KEY, '')) || fallback;
@@ -4918,13 +5025,15 @@ function refreshMenu() {
   for (const b of $('segOpp').children) b.classList.toggle('on', b.dataset.v === o);
   for (const b of $('segSize').children) b.classList.toggle('on', +b.dataset.v === settings.size);
   for (const b of $('segLevel').children) b.classList.toggle('on', +b.dataset.v === settings.level);
+  for (const b of $('segRules').children) b.classList.toggle('on', b.dataset.v === settings.rules);
   for (const b of $('segCtl').children) b.classList.toggle('on', b.dataset.v === settings.ctl);
   for (const b of $('segOrient').children) b.classList.toggle('on', b.dataset.v === settings.orient);
   $('btnTouch').classList.toggle('hide', !touchUI);
-  for (const [id, v] of [['segBtns', settings.btns], ['segAim', settings.aim], ['segJoy', settings.joy], ['segSens', settings.sens], ['segVib', settings.vib]])
+  for (const [id, v] of [['segBtns', settings.btns], ['segAim', settings.aim], ['segJoy', settings.joy], ['segSens', settings.sens], ['segVib', settings.vib], ['segFx', settings.fx]])
     for (const b of $(id).children) b.classList.toggle('on', b.dataset.v === v);
   const canVib = !!navigator.vibrate;
-  $('rowVib').classList.toggle('hide', !canVib); $('vibNote').classList.toggle('hide', canVib);
+  $('rowVib').classList.toggle('hide', !canVib);
+  $('fxNote').innerHTML = settings.fx === 'auto' ? (settings.autoLow ? ' <span class="ok">Zurzeit ist Sparen an.</span>' : ' Zurzeit volle Effekte.') : ''; $('vibNote').classList.toggle('hide', canVib);
   renderKeyHelp();
   $('btnTrain').classList.toggle('hl', !trainDone);
   $('rowLevel').classList.toggle('hide', o !== 'cpu');
@@ -5086,6 +5195,49 @@ function renderNet() {
 }
 function openSub(el, render) { subPanel = el; render(); showOnly(el); sfx.click(); }
 function closeSub() { keyCapture = null; if (subPanel === netEl && !net.role) netClose(); if (subPanel === wardEl) Snd.stopMusic(); subPanel = null; refreshMenu(); showOnly(menuEl); }
+// ================== Einführung ==================
+// Beim allerersten Start: 3 kurze Hinweise, danach auf Wunsch direkt in die Übung.
+let introStep = 0;
+const INTRO_KEY = 'eisduell-einstieg';
+const firstStart = () => !store.get(INTRO_KEY, false) && !trainDone && totalPts === 0 && !career && achieved.length === 0;
+function introSteps() {
+  const k = (t) => `<span class="k">${esc(t)}</span>`;
+  const B = binds.solo;
+  if (touchUI) return [
+    { ico: '🕹️', t: 'FAHREN', p: 'Leg den Daumen links auf den Bildschirm und zieh in die Richtung, in die du fahren willst. ' + (settings.joy === 'fest' ? 'Der Joystick ist unten links.' : 'Der Joystick erscheint dort, wo du hintippst.') },
+    { ico: '🏒', t: 'SCHIESSEN', p: `Halte ${k('SCHUSS')} gedrückt, um aufzuladen, und lass los. Je länger du hältst, desto härter der Schuss. Er fliegt in deine Fahrtrichtung.` },
+    { ico: '⇄', t: 'PASSEN UND CHECKEN', p: `Mit dem Puck spielt ${k('CHECK / PASS')} zu deinem Mitspieler (2 gegen 2). Ohne Puck rempelst du damit den Gegner. ${k('» SPRINT')} macht dich kurz schneller.` },
+  ];
+  if (mouseOn()) return [
+    { ico: '🖱️', t: 'FAHREN', p: `Der Mauszeiger zeigt, wohin du willst. ${k('W')} fährt hin, ${k('S')} rückwärts, ${k('A')}/${k('D')} seitwärts.` },
+    { ico: '🏒', t: 'SCHIESSEN', p: `Halte die ${k('linke Maustaste')} gedrückt und lass los. Je länger du hältst, desto härter der Schuss. Er fliegt zum Mauszeiger.` },
+    { ico: '⇄', t: 'PASSEN UND CHECKEN', p: `Die ${k('rechte Maustaste')} spielt mit dem Puck einen Pass (2 gegen 2), ohne Puck rempelst du den Gegner. ${k(keyName(B.sprint))} macht dich kurz schneller.` },
+  ];
+  return [
+    { ico: '⌨️', t: 'FAHREN', p: `Fahr mit ${k('W A S D')} oder den ${k('Pfeiltasten')}.` },
+    { ico: '🏒', t: 'SCHIESSEN', p: `Halte ${k(keyName(B.shoot))} gedrückt, um aufzuladen, und lass los. Je länger du hältst, desto härter der Schuss. Er fliegt in deine Fahrtrichtung.` },
+    { ico: '⇄', t: 'PASSEN UND CHECKEN', p: `${k(keyName(B.check))} spielt mit dem Puck einen Pass (2 gegen 2), ohne Puck rempelst du den Gegner. ${k(keyName(B.sprint))} macht dich kurz schneller, ${k(keyName(B.lob))} lupft den Puck.` },
+  ];
+}
+function renderIntro() {
+  const st = introSteps(), i = clamp(introStep, 0, st.length - 1), S = st[i], last = i === st.length - 1;
+  $('introCard').innerHTML = `<div class="ico">${S.ico}</div><b>${i + 1}/${st.length} · ${esc(S.t)}</b><p>${S.p}</p>`;
+  $('introDots').innerHTML = st.map((_, n) => `<i class="${n === i ? 'on' : ''}"></i>`).join('');
+  $('introNote').textContent = last ? 'In der Übung probierst du alles Schritt für Schritt aus. Du kannst sie jederzeit abbrechen.' : '';
+  $('introNextLabel').textContent = last ? 'Übung starten' : 'Weiter';
+  $('btnIntroSkip').textContent = last ? 'Direkt zum Menü' : 'Überspringen';
+}
+function introDone() { store.set(INTRO_KEY, true); }
+function introNext() {
+  if (introStep < introSteps().length - 1) { introStep++; renderIntro(); sfx.click(); return; }
+  introDone(); subPanel = null; startGame('train');
+}
+function introSkip() { introDone(); closeSub(); }
+function showIntro() { introStep = 0; openSub(introEl, renderIntro); }
+$('btnIntroNext').addEventListener('click', (e) => { e.currentTarget.blur(); Snd.init(); introNext(); });
+$('btnIntroSkip').addEventListener('click', (e) => { e.currentTarget.blur(); introSkip(); });
+$('btnIntro').addEventListener('click', (e) => { e.currentTarget.blur(); showIntro(); });
+
 function menuStart() { if (settings.opp === 'online') openSub(netEl, renderNet); else startGame(); }
 
 function resetMatchState() {
@@ -5131,6 +5283,7 @@ function startGame(mode) {
   if (opp === 'train') { trainStart(); return; }
   if (opp === 'mini') { miniStart(); return; }
   nextSpot = null; faceoff(0);
+  if (rulesOn()) popText(W / 2, CY - 120, 'MIT ABSEITS UND ICING', GOLD, 20);
   if (match.opp === 'cup') toast('TURNIER · RUNDE ' + (match.cup + 1) + ' GEGEN DIE ' + CUP[match.cup].name.toUpperCase(), teamC(1));
   if (match.opp === 'season') toast('SAISON ' + season.n + ' · SPIELTAG ' + (season.round + 1) + ' GEGEN DIE ' + CUP[match.cup].name.toUpperCase(), teamC(1));
   if (solo() && !dailyDone()) toast('AUFGABE: ' + todayChallenge().t, '#c4d8ee');
@@ -5396,7 +5549,7 @@ function netClose(reason) {
   const conn = net.conn, peer = net.peer;
   net.role = null; net.lobby = null; net.conn = null; net.peer = null; net.connected = false; net.code = '';
   net.snaps.length = 0; net.out.length = 0; net.off = null; net.last = null; net.ping = 0; net.remoteName = '';
-  net.cnt = CNT0(); net.pongAt = 0; emos.length = 0; net.series = null; net.remoteReal = false; emoMenu = false;
+  net.cnt = CNT0(); net.pongAt = 0; net.silent = 0; emos.length = 0; net.series = null; net.remoteReal = false; emoMenu = false;
   try { conn && conn.close(); } catch (e) {}
   try { peer && peer.destroy(); } catch (e) {}
   if (!reason) return;
@@ -5646,7 +5799,7 @@ function onNetData(d) {
     case 'in': if (net.role === 'host') hostInput(d); break;
     case 'again': if (net.role === 'host' && screen === 'over' && performance.now() > canRestartAt) startGame(); break;
     case 'ping': send({ t: 'pong', p: d.p }); break;
-    case 'pong': if (typeof d.p === 'number') { net.ping = performance.now() - d.p; net.pongAt = performance.now(); } break;
+    case 'pong': if (typeof d.p === 'number') { net.ping = performance.now() - d.p; net.pongAt = performance.now(); net.silent = 0; } break;
     case 'emo': if (screen === 'game' && (d.i | 0) >= 0 && (d.i | 0) < REACT_N) showEmoji(d.i | 0, net.role === 'host' ? 1 : 0); break;
     case 'bye': netClose('Dein Kollege hat das Spiel verlassen.'); break;
   }
@@ -5675,10 +5828,20 @@ function snapshot() {
     ev: net.out.splice(0),
   };
 }
+// Kommt 20 s lang keine Antwort (Funkloch, Handy gesperrt), wird die Verbindung beendet.
+// Gezählt wird nur Zeit, in der dieses Gerät selbst läuft (dt ist pro Bild begrenzt).
+function netSilent(dt) {
+  if (!net.pongAt) return false;
+  net.silent = (net.silent || 0) + Math.min(dt, 0.1);
+  if (net.silent < 20) return false;
+  netClose('Dein Kollege antwortet nicht mehr (Funkloch oder Handy gesperrt?). Die Verbindung wurde beendet.');
+  return true;
+}
 function hostTick(dt) {
   if (!net.connected) return;
   net.pingT += dt;
   if (net.pingT > 2) { net.pingT = 0; send({ t: 'ping', p: performance.now() }); }
+  if (netSilent(dt)) return;
   if (screen !== 'game') return;
   net.sendT += dt;
   if (net.sendT >= 1 / 30) { net.sendT = 0; send(snapshot()); }
@@ -5801,6 +5964,7 @@ function guestTick(dt) {
   if (!net.connected) return;
   net.pingT += dt;
   if (net.pingT > 2) { net.pingT = 0; send({ t: 'ping', p: performance.now() }); }
+  if (netSilent(dt)) return;
   // Tastendrücke als Zähler verschicken (so geht keiner verloren)
   const C = ctl[0];
   if (C.shootReleased) { C.shootReleased = false; net.cnt.rl++; }
@@ -5899,6 +6063,7 @@ segClick('segBtns', (v) => { settings.btns = ['s', 'm', 'l'].includes(v) ? v : '
 segClick('segAim', (v) => { settings.aim = v === 'aus' ? 'aus' : 'an'; });
 segClick('segJoy', (v) => { settings.joy = v === 'fest' ? 'fest' : 'wander'; });
 segClick('segSens', (v) => { settings.sens = ['f', 'm', 'd'].includes(v) ? v : 'm'; });
+segClick('segFx', (v) => { settings.fx = ['spar', 'voll'].includes(v) ? v : 'auto'; settings.autoLow = false; fxSlowT = 0; fxAvg = 1 / 60; applyFx(); });   // «Automatisch» misst neu
 segClick('segVib', (v) => { settings.vib = v === 'aus' ? 'aus' : 'an'; if (settings.vib === 'an') vibrate(40); });
 $('btnTouch').addEventListener('click', (e) => { e.currentTarget.blur(); openSub(touchEl, refreshMenu); });
 $('btnTouchBack').addEventListener('click', closeSub);
@@ -5920,6 +6085,7 @@ $('keysList').addEventListener('click', (e) => {
 segClick('segOrient', (v) => { settings.orient = v === 'hoch' ? 'hoch' : 'quer'; if (settings.orient === 'hoch') unlockOrient(); });
 segClick('segSize', (v) => { settings.size = v === '2' ? 2 : 1; });
 segClick('segLevel', (v) => { settings.level = +v; });
+segClick('segRules', (v) => { settings.rules = v === 'echt' ? 'echt' : 'arcade'; });
 segClick('segCtl', (v) => { settings.ctl = v === 'mouse' ? 'mouse' : 'keys'; });
 function wardClick(e) {
   const b = e.target.closest('.sw'); if (!b) return;
@@ -6011,6 +6177,7 @@ resize();
 toMenu();
 requestAnimationFrame((t) => { last = t; requestAnimationFrame(frame); });
 joinFromLink();
+if (!subPanel && firstStart()) showIntro();   // allererster Start: Einführung
 
 // Testzugang für automatische Tests (über die Browser-Konsole): spult das Spiel vor
 window.__eis = {
@@ -6040,7 +6207,7 @@ window.__eis = {
   ask: () => fightAsk && { a: fightAsk.a.team, b: fightAsk.b.team, t: +fightAsk.t.toFixed(2) },
   challenge: (team = 0) => tryChallenge(active[team]),
   fightCD: (v) => { if (typeof v === 'number') fightCD = v; return fightCD; },
-  net, host: () => netHost(), join: (c) => netJoin(c),
+  net, host: () => netHost(), join: (c) => netJoin(c), fx: () => ({ lowFx, dpr, avg: +fxAvg.toFixed(4), slow: +fxSlowT.toFixed(2), set: settings.fx, autoLow: settings.autoLow }), fxMeter: (dt) => fxMeter(dt), rules: () => ({ on: rulesOn(), iceT, prevX: rulePrevX }),
   tr: () => tr && { i: tr.i, id: TRAIN[tr.i].id, k: tr.k, done: +tr.done.toFixed(2), skips: tr.skips },
   train: (i) => { if (tr) trainSetup(i); }, season: () => season, mini: () => mg, career: () => career, miniRec: () => miniRec, layout: () => btns, touch: (on) => { touchUI = !!on; resize(); refreshMenu(); },
 };
